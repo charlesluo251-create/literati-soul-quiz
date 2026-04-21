@@ -59,45 +59,16 @@
     66% { transform: translate(-1%, 2%) rotate(-1deg); }
   }
 
-  /* 飘落花瓣 */
-  .petal {
+  /* ===== Canvas 水墨背景 ===== */
+  #inkCanvas {
     position: fixed;
-    width: 12px;
-    height: 12px;
-    opacity: 0;
+    inset: 0;
     z-index: 1;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.2s ease;
   }
-
-  .petal::before {
-    content: '🌸';
-    font-size: 14px;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  @keyframes petalFall {
-    0% { opacity: 0; transform: translateY(-20px) rotate(0deg) scale(0.8); }
-    10% { opacity: 0.6; }
-    90% { opacity: 0.4; }
-    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.4); }
-  }
-
-  /* 山水剪影 */
-  .mountain-bg {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40vh;
-    z-index: 0;
-    opacity: 0.06;
-    background:
-      linear-gradient(135deg, transparent 33%, var(--gold-dark) 33%, var(--gold-dark) 34%, transparent 34%),
-      linear-gradient(225deg, transparent 33%, var(--gold-dark) 33%, var(--gold-dark) 34%, transparent 34%);
-    background-size: 80px 140px;
-  }
+  #inkCanvas.active { opacity: 1; }
 
   /* ===== 容器 ===== */
   .container {
@@ -119,9 +90,7 @@
     animation: fadeIn 1.2s ease;
   }
 
-  .start-page .title-group {
-    margin-bottom: 20px;
-  }
+  .start-page .title-group { margin-bottom: 20px; }
 
   .start-page .sub-title {
     font-size: 14px;
@@ -160,6 +129,40 @@
   .start-page .description em {
     color: var(--gold-light);
     font-style: normal;
+  }
+
+  /* 四君子水墨装饰 */
+  .four-gentlemen {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+  .gentleman-item {
+    text-align: center;
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    cursor: default;
+  }
+  .gentleman-item:hover { opacity: 1; transform: translateY(-3px); }
+  .gentleman-paint {
+    width: 64px;
+    height: 80px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(212, 168, 83, 0.12);
+  }
+  .gentleman-paint canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .gentleman-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    font-weight: 300;
   }
 
   /* 装饰画框 */
@@ -243,9 +246,7 @@
     box-shadow: 0 8px 32px rgba(212, 168, 83, 0.3);
   }
 
-  .btn-primary:hover::before {
-    transform: translateX(100%);
-  }
+  .btn-primary:hover::before { transform: translateX(100%); }
 
   /* ===== 问卷页 ===== */
   .quiz-page {
@@ -293,9 +294,7 @@
   }
 
   /* 问题卡片 */
-  .question-card {
-    animation: slideIn 0.5s ease;
-  }
+  .question-card { animation: slideIn 0.5s ease; }
 
   .question-card .q-label {
     font-size: 12px;
@@ -379,9 +378,7 @@
     transition: color 0.35s ease;
   }
 
-  .option-btn:hover .option-text {
-    color: var(--text-primary);
-  }
+  .option-btn:hover .option-text { color: var(--text-primary); }
 
   .option-btn.selected {
     border-color: var(--gold);
@@ -394,9 +391,7 @@
     border-color: var(--gold);
   }
 
-  .option-btn.selected .option-text {
-    color: var(--gold-light);
-  }
+  .option-btn.selected .option-text { color: var(--gold-light); }
 
   /* ===== 结果页 ===== */
   .result-page {
@@ -434,10 +429,10 @@
     font-weight: 300;
   }
 
-  /* 文人画像 */
+  /* 文人画像（真实古画） */
   .portrait-frame {
-    width: 280px;
-    height: 360px;
+    width: 260px;
+    height: 380px;
     margin: 0 auto 40px;
     position: relative;
     border: 1px solid var(--border);
@@ -459,22 +454,16 @@
     z-index: 2;
   }
 
-  .portrait-frame .portrait-art {
+  .portrait-frame img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.9;
+    opacity: 0.85;
+    transition: opacity 0.6s ease;
+    position: relative;
+    z-index: 1;
   }
-
-  .portrait-frame .portrait-placeholder {
-    font-family: 'Ma Shan Zheng', cursive;
-    font-size: 80px;
-    color: var(--gold);
-    opacity: 0.15;
-    writing-mode: vertical-rl;
-    letter-spacing: 20px;
-    line-height: 1.2;
-  }
+  .portrait-frame img:hover { opacity: 1; }
 
   .portrait-corner {
     position: absolute;
@@ -536,9 +525,7 @@
   }
 
   /* 性格解读 */
-  .analysis-section {
-    margin-bottom: 36px;
-  }
+  .analysis-section { margin-bottom: 36px; }
 
   .analysis-section h3 {
     font-size: 14px;
@@ -657,9 +644,7 @@
     letter-spacing: 1px;
   }
 
-  .copyright .copy-line {
-    opacity: 0.6;
-  }
+  .copyright .copy-line { opacity: 0.6; }
 
   /* ===== 动画 ===== */
   @keyframes fadeIn {
@@ -729,15 +714,7 @@
     40% { opacity: 1; transform: scale(1.5); }
   }
 
-  /* ===== 响应式 ===== */
-  @media (max-width: 640px) {
-    .container { padding: 16px; }
-    .option-btn { padding: 14px 16px; gap: 12px; }
-    .portrait-frame { width: 240px; height: 310px; }
-    .poem-card { padding: 28px 20px; }
-  }
-
-  /* 粒子效果 */
+  /* ===== 粒子效果 ===== */
   .particle {
     position: fixed;
     width: 2px;
@@ -755,15 +732,26 @@
     50% { opacity: 0.4; }
   }
 
-  /* 隐藏类 */
   .hidden { display: none !important; }
+
+  /* ===== 响应式 ===== */
+  @media (max-width: 640px) {
+    .container { padding: 16px; }
+    .option-btn { padding: 14px 16px; gap: 12px; }
+    .portrait-frame { width: 220px; height: 320px; }
+    .poem-card { padding: 28px 20px; }
+    .four-gentlemen { gap: 16px; }
+    .gentleman-paint { width: 52px; height: 66px; }
+  }
 </style>
 </head>
 <body>
 
 <!-- 背景层 -->
 <div class="bg-layer"></div>
-<div class="mountain-bg"></div>
+
+<!-- 水墨画Canvas背景 -->
+<canvas id="inkCanvas"></canvas>
 
 <!-- 首页 -->
 <div class="container" id="startPage">
@@ -775,6 +763,25 @@
 
     <div class="frame-decoration">
       <div class="ink-text">诗酒趁年华</div>
+    </div>
+
+    <div class="four-gentlemen">
+      <div class="gentleman-item">
+        <div class="gentleman-paint"><canvas id="plumThumb"></canvas></div>
+        <div class="gentleman-label">梅</div>
+      </div>
+      <div class="gentleman-item">
+        <div class="gentleman-paint"><canvas id="orchidThumb"></canvas></div>
+        <div class="gentleman-label">兰</div>
+      </div>
+      <div class="gentleman-item">
+        <div class="gentleman-paint"><canvas id="bambooThumb"></canvas></div>
+        <div class="gentleman-label">竹</div>
+      </div>
+      <div class="gentleman-item">
+        <div class="gentleman-paint"><canvas id="chrysThumb"></canvas></div>
+        <div class="gentleman-label">菊</div>
+      </div>
     </div>
 
     <div class="divider"></div>
@@ -819,7 +826,6 @@
     </div>
 
     <div class="question-card" id="questionCard">
-      <!-- 动态渲染 -->
     </div>
   </div>
 </div>
@@ -838,7 +844,6 @@
 <!-- 结果页 -->
 <div class="container" id="resultPage" style="display:none;">
   <div class="result-page" id="resultContent">
-    <!-- 动态渲染 -->
   </div>
 
   <div class="copyright">
@@ -848,24 +853,662 @@
 </div>
 
 <script>
-// ===== 花瓣粒子 =====
-function createPetals() {
-  const body = document.body;
-  for (let i = 0; i < 8; i++) {
-    setTimeout(() => {
-      const petal = document.createElement('div');
-      petal.className = 'petal';
-      petal.style.left = Math.random() * 100 + 'vw';
-      petal.style.animationDuration = (8 + Math.random() * 12) + 's';
-      petal.style.animationDelay = Math.random() * 5 + 's';
-      petal.style.animation = `petalFall ${8 + Math.random() * 12}s linear ${Math.random() * 5}s infinite`;
-      const petals = ['🌸', '🍂', '✿', '❀', '🍃'];
-      petal.innerHTML = `<span style="font-size:${10 + Math.random()*8}px">${petals[Math.floor(Math.random()*petals.length)]}</span>`;
-      body.appendChild(petal);
-    }, i * 800);
+// ============================================================
+//  水墨画 Canvas 绘图引擎
+// ============================================================
+
+const InkPainter = {
+  // 初始化全屏Canvas
+  canvas: null,
+  ctx: null,
+
+  init() {
+    this.canvas = document.getElementById('inkCanvas');
+    this.ctx = this.canvas.getContext('2d');
+    this.resize();
+    window.addEventListener('resize', () => this.resize());
+  },
+
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  },
+
+  clear() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  },
+
+  // 模拟毛笔笔触：落笔重、收笔轻
+  inkStroke(ctx, x1, y1, x2, y2, width, color) {
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    const dist = Math.hypot(x2 - x1, y2 - y1);
+    const steps = Math.max(4, Math.floor(dist / 3));
+
+    for (let i = 0; i < steps; i++) {
+      const t = i / steps;
+      const x = x1 + (x2 - x1) * t;
+      const y = y1 + (y2 - y1) * t;
+      // 笔压：中间粗、两端细
+      const pressure = Math.sin(t * Math.PI) * 0.7 + 0.3;
+      ctx.lineWidth = width * pressure;
+
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        // 添加微小抖动模拟毛笔
+        const jitter = width * 0.08;
+        ctx.lineTo(x + (Math.random() - 0.5) * jitter, y + (Math.random() - 0.5) * jitter);
+      }
+    }
+    ctx.stroke();
+  },
+
+  // 枯笔效果（干墨）
+  dryBrush(ctx, x1, y1, x2, y2, width, color) {
+    const dist = Math.hypot(x2 - x1, y2 - y1);
+    const steps = Math.max(4, Math.floor(dist / 2));
+    for (let i = 0; i < steps; i++) {
+      const t = i / steps;
+      const x = x1 + (x2 - x1) * t + (Math.random() - 0.5) * width * 0.6;
+      const y = y1 + (y2 - y1) * t + (Math.random() - 0.5) * width * 0.3;
+      const pressure = Math.sin(t * Math.PI);
+      if (Math.random() > 0.3) {
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.3 + pressure * 0.5;
+        ctx.beginPath();
+        ctx.arc(x, y, width * 0.15 * (0.3 + Math.random() * 0.7), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+  },
+
+  // ===== 梅花 =====
+  drawPlum(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+    const scale = Math.min(cw, ch) / 600;
+
+    const inkColor = `rgba(80, 60, 50, 0.25)`;
+    const inkLight = `rgba(80, 60, 50, 0.15)`;
+    const petalColor = `rgba(200, 80, 90, 0.2)`;
+    const petalDark = `rgba(180, 60, 70, 0.3)`;
+
+    // 主枝干 - 从右下到左上
+    this.inkStroke(c, cw * 0.85, ch * 0.95, cw * 0.55, ch * 0.6, 8 * scale, inkColor);
+    this.inkStroke(c, cw * 0.55, ch * 0.6, cw * 0.3, ch * 0.25, 5 * scale, inkLight);
+    // 分枝
+    this.inkStroke(c, cw * 0.7, ch * 0.75, cw * 0.82, ch * 0.55, 3 * scale, inkLight);
+    this.inkStroke(c, cw * 0.82, ch * 0.55, cw * 0.9, ch * 0.4, 2 * scale, inkLight);
+    this.inkStroke(c, cw * 0.45, ch * 0.45, cw * 0.35, ch * 0.3, 2.5 * scale, inkLight);
+
+    // 枯笔纹理
+    this.dryBrush(c, cw * 0.6, ch * 0.55, cw * 0.5, ch * 0.5, 6 * scale, inkColor);
+
+    // 梅花 - 五瓣花
+    const drawBlossom = (cx, cy, r) => {
+      for (let i = 0; i < 5; i++) {
+        const angle = (i / 5) * Math.PI * 2 - Math.PI / 2;
+        const px = cx + Math.cos(angle) * r * 0.6;
+        const py = cy + Math.sin(angle) * r * 0.6;
+        c.beginPath();
+        c.ellipse(px, py, r * 0.45, r * 0.35, angle, 0, Math.PI * 2);
+        c.fillStyle = petalColor;
+        c.fill();
+      }
+      // 花蕊
+      c.beginPath();
+      c.arc(cx, cy, r * 0.15, 0, Math.PI * 2);
+      c.fillStyle = petalDark;
+      c.fill();
+      // 花蕊点
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2;
+        c.beginPath();
+        c.arc(cx + Math.cos(a) * r * 0.25, cy + Math.sin(a) * r * 0.25, 1 * scale, 0, Math.PI * 2);
+        c.fillStyle = `rgba(160, 50, 50, 0.4)`;
+        c.fill();
+      }
+    };
+
+    drawBlossom(cw * 0.28, ch * 0.23, 16 * scale);
+    drawBlossom(cw * 0.88, ch * 0.38, 14 * scale);
+    drawBlossom(cw * 0.33, ch * 0.32, 12 * scale);
+    drawBlossom(cw * 0.8, ch * 0.52, 10 * scale);
+    drawBlossom(cw * 0.5, ch * 0.4, 11 * scale);
+
+    // 花苞
+    const drawBud = (cx, cy, r) => {
+      c.beginPath();
+      c.arc(cx, cy, r * 0.5, 0, Math.PI * 2);
+      c.fillStyle = `rgba(200, 80, 90, 0.25)`;
+      c.fill();
+      c.beginPath();
+      c.arc(cx, cy, r * 0.3, 0, Math.PI * 2);
+      c.fillStyle = `rgba(180, 60, 70, 0.35)`;
+      c.fill();
+    };
+    drawBud(cw * 0.42, ch * 0.38, 8 * scale);
+    drawBud(cw * 0.6, ch * 0.5, 7 * scale);
+  },
+
+  // ===== 兰花 =====
+  drawOrchid(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+    const scale = Math.min(cw, ch) / 600;
+
+    const inkColor = `rgba(60, 80, 65, 0.25)`;
+    const inkLight = `rgba(60, 80, 65, 0.15)`;
+    const leafColor = `rgba(80, 120, 80, 0.18)`;
+    const flowerColor = `rgba(140, 100, 170, 0.22)`;
+
+    // 兰叶 - 飘逸的曲线
+    const drawLeaf = (sx, sy, ex, ey, curve, width) => {
+      c.beginPath();
+      c.moveTo(sx, sy);
+      c.quadraticCurveTo(
+        sx + (ex - sx) * 0.5 + curve * 0.3,
+        sy + (ey - sy) * 0.3 + curve * 0.2,
+        ex, ey
+      );
+      c.strokeStyle = leafColor;
+      c.lineWidth = width * scale;
+      c.lineCap = 'round';
+      c.stroke();
+
+      // 叶脉
+      c.beginPath();
+      c.moveTo(sx + (ex - sx) * 0.2, sy + (ey - sy) * 0.15);
+      c.quadraticCurveTo(
+        sx + (ex - sx) * 0.6 + curve * 0.2,
+        sy + (ey - sy) * 0.5 + curve * 0.15,
+        ex - (ex - sx) * 0.05, ey - (ey - sy) * 0.05
+      );
+      c.strokeStyle = inkLight;
+      c.lineWidth = width * 0.3 * scale;
+      c.stroke();
+    };
+
+    drawLeaf(cw * 0.5, ch * 0.9, cw * 0.15, ch * 0.3, -60 * scale, 4);
+    drawLeaf(cw * 0.5, ch * 0.85, cw * 0.2, ch * 0.2, -40 * scale, 3);
+    drawLeaf(cw * 0.55, ch * 0.88, cw * 0.75, ch * 0.25, 50 * scale, 3.5);
+    drawLeaf(cw * 0.48, ch * 0.92, cw * 0.85, ch * 0.5, 80 * scale, 2.5);
+
+    // 枯笔地面
+    this.dryBrush(c, cw * 0.3, ch * 0.92, cw * 0.7, ch * 0.88, 5 * scale, inkColor);
+
+    // 兰花 - 三瓣
+    const drawOrchidFlower = (cx, cy, r) => {
+      // 外三瓣
+      for (let i = 0; i < 3; i++) {
+        const angle = (i / 3) * Math.PI * 2 - Math.PI / 6;
+        const px = cx + Math.cos(angle) * r * 0.8;
+        const py = cy + Math.sin(angle) * r * 0.8;
+        c.beginPath();
+        c.ellipse(px, py, r * 0.5, r * 0.3, angle, 0, Math.PI * 2);
+        c.fillStyle = flowerColor;
+        c.fill();
+      }
+      // 内瓣
+      c.beginPath();
+      c.ellipse(cx, cy - r * 0.1, r * 0.25, r * 0.18, 0, 0, Math.PI * 2);
+      c.fillStyle = `rgba(160, 120, 190, 0.25)`;
+      c.fill();
+      // 花心
+      c.beginPath();
+      c.arc(cx, cy, r * 0.1, 0, Math.PI * 2);
+      c.fillStyle = `rgba(120, 70, 140, 0.35)`;
+      c.fill();
+    };
+
+    // 花茎
+    this.inkStroke(c, cw * 0.5, ch * 0.85, cw * 0.48, ch * 0.55, 1.5 * scale, inkLight);
+    drawOrchidFlower(cw * 0.48, ch * 0.53, 14 * scale);
+
+    this.inkStroke(c, cw * 0.52, ch * 0.82, cw * 0.55, ch * 0.6, 1.2 * scale, inkLight);
+    drawOrchidFlower(cw * 0.55, ch * 0.58, 11 * scale);
+  },
+
+  // ===== 竹子 =====
+  drawBamboo(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+    const scale = Math.min(cw, ch) / 600;
+
+    const inkColor = `rgba(50, 70, 50, 0.3)`;
+    const inkLight = `rgba(50, 70, 50, 0.15)`;
+    const leafColor = `rgba(60, 100, 55, 0.2)`;
+
+    // 竹竿
+    const drawBambooStalk = (x, topY, bottomY, width) => {
+      const segments = 5;
+      const segH = (bottomY - topY) / segments;
+      for (let i = 0; i < segments; i++) {
+        const sy = topY + i * segH;
+        const ey = topY + (i + 1) * segH;
+        // 竹节
+        c.beginPath();
+        c.moveTo(x - width * 0.6, sy);
+        c.lineTo(x + width * 0.6, sy);
+        c.strokeStyle = inkColor;
+        c.lineWidth = 1.5 * scale;
+        c.stroke();
+        // 竹段
+        this.inkStroke(c, x, sy, x, ey, width * scale, inkLight);
+      }
+    };
+
+    drawBambooStalk(cw * 0.7, ch * 0.05, ch * 0.95, 5);
+    drawBambooStalk(cw * 0.75, ch * 0.15, ch * 0.9, 4);
+    drawBambooStalk(cw * 0.62, ch * 0.2, ch * 0.85, 3);
+
+    // 竹叶
+    const drawBambooLeaf = (sx, sy, angle, length) => {
+      c.save();
+      c.translate(sx, sy);
+      c.rotate(angle);
+      c.beginPath();
+      c.moveTo(0, 0);
+      c.quadraticCurveTo(length * 0.5, -length * 0.08, length, 0);
+      c.quadraticCurveTo(length * 0.5, length * 0.08, 0, 0);
+      c.fillStyle = leafColor;
+      c.fill();
+      // 叶脉
+      c.beginPath();
+      c.moveTo(length * 0.1, 0);
+      c.lineTo(length * 0.85, 0);
+      c.strokeStyle = inkLight;
+      c.lineWidth = 0.5 * scale;
+      c.stroke();
+      c.restore();
+    };
+
+    // 竹叶簇
+    const drawLeafCluster = (cx, cy, count) => {
+      for (let i = 0; i < count; i++) {
+        const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 0.8;
+        const len = (25 + Math.random() * 20) * scale;
+        drawBambooLeaf(cx, cy, angle, len);
+      }
+    };
+
+    drawLeafCluster(cw * 0.68, ch * 0.18, 4);
+    drawLeafCluster(cw * 0.72, ch * 0.3, 5);
+    drawLeafCluster(cw * 0.62, ch * 0.35, 3);
+    drawLeafCluster(cw * 0.76, ch * 0.22, 4);
+    drawLeafCluster(cw * 0.65, ch * 0.12, 3);
+    drawLeafCluster(cw * 0.73, ch * 0.42, 4);
+    drawLeafCluster(cw * 0.6, ch * 0.5, 3);
+
+    // 远景淡竹
+    this.inkStroke(c, cw * 0.2, ch * 0.1, cw * 0.18, ch * 0.8, 2 * scale, `rgba(50, 70, 50, 0.06)`);
+    drawLeafCluster(cw * 0.2, ch * 0.25, 2);
+    drawLeafCluster(cw * 0.2, ch * 0.4, 2);
+  },
+
+  // ===== 菊花 =====
+  drawChrysanthemum(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+    const scale = Math.min(cw, ch) / 600;
+
+    const inkColor = `rgba(70, 65, 45, 0.25)`;
+    const inkLight = `rgba(70, 65, 45, 0.15)`;
+    const petalColor1 = `rgba(210, 170, 60, 0.15)`;
+    const petalColor2 = `rgba(190, 140, 40, 0.2)`;
+    const petalColor3 = `rgba(220, 180, 70, 0.12)`;
+
+    // 菊花茎叶
+    this.inkStroke(c, cw * 0.5, ch * 0.85, cw * 0.5, ch * 0.5, 2.5 * scale, inkColor);
+    this.inkStroke(c, cw * 0.5, ch * 0.65, cw * 0.4, ch * 0.72, 1.5 * scale, inkLight);
+    this.inkStroke(c, cw * 0.5, ch * 0.72, cw * 0.6, ch * 0.78, 1.5 * scale, inkLight);
+
+    // 叶子
+    const drawChrysLeaf = (cx, cy, angle) => {
+      c.save();
+      c.translate(cx, cy);
+      c.rotate(angle);
+      c.beginPath();
+      c.moveTo(0, 0);
+      c.bezierCurveTo(15 * scale, -8 * scale, 30 * scale, -5 * scale, 35 * scale, 0);
+      c.bezierCurveTo(30 * scale, 5 * scale, 15 * scale, 8 * scale, 0, 0);
+      c.fillStyle = `rgba(80, 100, 50, 0.15)`;
+      c.fill();
+      c.restore();
+    };
+
+    drawChrysLeaf(cw * 0.4, ch * 0.72, -0.3);
+    drawChrysLeaf(cw * 0.6, ch * 0.78, 0.4);
+
+    // 菊花 - 多层花瓣
+    const drawChrysFlower = (cx, cy, r) => {
+      // 外层长花瓣
+      for (let i = 0; i < 16; i++) {
+        const angle = (i / 16) * Math.PI * 2;
+        c.save();
+        c.translate(cx, cy);
+        c.rotate(angle);
+        c.beginPath();
+        c.moveTo(0, 0);
+        c.bezierCurveTo(r * 0.3, -r * 0.08, r * 0.7, -r * 0.05, r, 0);
+        c.bezierCurveTo(r * 0.7, r * 0.05, r * 0.3, r * 0.08, 0, 0);
+        c.fillStyle = petalColor1;
+        c.fill();
+        c.restore();
+      }
+      // 中层花瓣
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * Math.PI * 2 + 0.15;
+        c.save();
+        c.translate(cx, cy);
+        c.rotate(angle);
+        c.beginPath();
+        c.moveTo(0, 0);
+        c.bezierCurveTo(r * 0.25, -r * 0.07, r * 0.55, -r * 0.04, r * 0.7, 0);
+        c.bezierCurveTo(r * 0.55, r * 0.04, r * 0.25, r * 0.07, 0, 0);
+        c.fillStyle = petalColor2;
+        c.fill();
+        c.restore();
+      }
+      // 内层花瓣
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + 0.3;
+        c.save();
+        c.translate(cx, cy);
+        c.rotate(angle);
+        c.beginPath();
+        c.moveTo(0, 0);
+        c.bezierCurveTo(r * 0.15, -r * 0.06, r * 0.35, -r * 0.03, r * 0.45, 0);
+        c.bezierCurveTo(r * 0.35, r * 0.03, r * 0.15, r * 0.06, 0, 0);
+        c.fillStyle = petalColor3;
+        c.fill();
+        c.restore();
+      }
+      // 花心
+      c.beginPath();
+      c.arc(cx, cy, r * 0.12, 0, Math.PI * 2);
+      c.fillStyle = `rgba(180, 140, 40, 0.3)`;
+      c.fill();
+    };
+
+    drawChrysFlower(cw * 0.5, ch * 0.38, 50 * scale);
+
+    // 小花苞
+    drawChrysFlower(cw * 0.38, ch * 0.5, 22 * scale);
+    drawChrysFlower(cw * 0.62, ch * 0.45, 18 * scale);
+  },
+
+  // ===== 远山 =====
+  drawMountain(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+
+    const drawMountainLayer = (yBase, peaks, color) => {
+      c.beginPath();
+      c.moveTo(0, ch);
+      peaks.forEach(([px, py]) => c.lineTo(cw * px, ch * py));
+      c.lineTo(cw, ch);
+      c.closePath();
+      c.fillStyle = color;
+      c.fill();
+    };
+
+    drawMountainLayer(ch, [[0, 0.7], [0.15, 0.45], [0.3, 0.55], [0.5, 0.3], [0.65, 0.5], [0.8, 0.35], [1, 0.6]], `rgba(80, 90, 110, 0.1)`);
+    drawMountainLayer(ch, [[0, 0.8], [0.2, 0.6], [0.35, 0.7], [0.55, 0.5], [0.7, 0.65], [0.85, 0.55], [1, 0.75]], `rgba(70, 80, 100, 0.07)`);
+    drawMountainLayer(ch, [[0, 0.85], [0.25, 0.72], [0.45, 0.78], [0.65, 0.68], [0.9, 0.8], [1, 0.85]], `rgba(60, 70, 90, 0.05)`);
+
+    // 水波
+    for (let i = 0; i < 3; i++) {
+      const y = ch * (0.88 + i * 0.03);
+      c.beginPath();
+      for (let x = 0; x < cw; x += 4) {
+        const wave = Math.sin(x * 0.008 + i * 1.5) * 3;
+        if (x === 0) c.moveTo(x, y + wave);
+        else c.lineTo(x, y + wave);
+      }
+      c.strokeStyle = `rgba(140, 160, 190, ${0.08 - i * 0.02})`;
+      c.lineWidth = 0.8;
+      c.stroke();
+    }
+  },
+
+  // ===== 明月 =====
+  drawMoon(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+
+    // 月光晕
+    const grd = c.createRadialGradient(cw * 0.78, ch * 0.18, 0, cw * 0.78, ch * 0.18, cw * 0.2);
+    grd.addColorStop(0, `rgba(230, 220, 170, 0.08)`);
+    grd.addColorStop(0.5, `rgba(210, 200, 150, 0.03)`);
+    grd.addColorStop(1, `transparent`);
+    c.fillStyle = grd;
+    c.fillRect(0, 0, cw, ch);
+
+    // 弦月
+    c.beginPath();
+    c.arc(cw * 0.78, ch * 0.18, Math.min(cw, ch) * 0.06, 0, Math.PI * 2);
+    c.fillStyle = `rgba(230, 220, 170, 0.15)`;
+    c.fill();
+
+    // 遮挡形成弦月
+    c.beginPath();
+    c.arc(cw * 0.78 + Math.min(cw, ch) * 0.025, ch * 0.17, Math.min(cw, ch) * 0.055, 0, Math.PI * 2);
+    c.fillStyle = `rgba(10, 10, 18, 0.9)`;
+    c.fill();
+
+    // 松枝剪影
+    this.inkStroke(c, cw * 0.05, ch * 0.05, cw * 0.15, ch * 0.25, 3, `rgba(50, 60, 50, 0.2)`);
+    this.inkStroke(c, cw * 0.12, ch * 0.18, cw * 0.08, ch * 0.3, 2, `rgba(50, 60, 50, 0.15)`);
+    this.inkStroke(c, cw * 0.14, ch * 0.2, cw * 0.22, ch * 0.28, 2, `rgba(50, 60, 50, 0.12)`);
+
+    // 云
+    const drawCloud = (cx, cy, rw, rh, alpha) => {
+      c.beginPath();
+      c.ellipse(cx, cy, rw, rh, 0, 0, Math.PI * 2);
+      c.fillStyle = `rgba(180, 175, 160, ${alpha})`;
+      c.fill();
+      c.beginPath();
+      c.ellipse(cx - rw * 0.3, cy + rh * 0.2, rw * 0.7, rh * 0.8, 0, 0, Math.PI * 2);
+      c.fill();
+      c.beginPath();
+      c.ellipse(cx + rw * 0.4, cy + rh * 0.1, rw * 0.6, rh * 0.7, 0, 0, Math.PI * 2);
+      c.fill();
+    };
+    drawCloud(cw * 0.4, ch * 0.3, cw * 0.15, ch * 0.025, 0.04);
+    drawCloud(cw * 0.6, ch * 0.22, cw * 0.1, ch * 0.02, 0.03);
+  },
+
+  // ===== 烟雨孤舟 =====
+  drawMist(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+
+    // 远山
+    c.beginPath();
+    c.moveTo(0, ch * 0.6);
+    c.bezierCurveTo(cw * 0.2, ch * 0.35, cw * 0.35, ch * 0.45, cw * 0.5, ch * 0.5);
+    c.bezierCurveTo(cw * 0.65, ch * 0.55, cw * 0.8, ch * 0.4, cw, ch * 0.55);
+    c.lineTo(cw, ch); c.lineTo(0, ch);
+    c.fillStyle = `rgba(80, 90, 110, 0.06)`;
+    c.fill();
+
+    // 烟雾效果
+    for (let i = 0; i < 4; i++) {
+      const y = ch * (0.45 + i * 0.1);
+      c.beginPath();
+      c.moveTo(0, y);
+      c.bezierCurveTo(cw * 0.3, y - ch * 0.03, cw * 0.7, y + ch * 0.02, cw, y - ch * 0.01);
+      c.lineTo(cw, y + ch * 0.05);
+      c.bezierCurveTo(cw * 0.7, y + ch * 0.07, cw * 0.3, y + ch * 0.06, 0, y + ch * 0.04);
+      c.fillStyle = `rgba(160, 160, 180, ${0.025 - i * 0.004})`;
+      c.fill();
+    }
+
+    // 水面
+    c.beginPath();
+    c.moveTo(0, ch * 0.75);
+    c.lineTo(cw, ch * 0.75);
+    c.lineTo(cw, ch); c.lineTo(0, ch);
+    c.fillStyle = `rgba(60, 70, 100, 0.05)`;
+    c.fill();
+
+    // 孤舟
+    const bx = cw * 0.45, by = ch * 0.72;
+    // 船身
+    c.beginPath();
+    c.moveTo(bx - 30 * (cw / 600), by);
+    c.quadraticCurveTo(bx, by + 12 * (ch / 600), bx + 35 * (cw / 600), by);
+    c.strokeStyle = `rgba(140, 120, 90, 0.2)`;
+    c.lineWidth = 1.5;
+    c.stroke();
+    // 船帆
+    c.beginPath();
+    c.moveTo(bx + 5 * (cw / 600), by);
+    c.lineTo(bx + 5 * (cw / 600), by - 45 * (ch / 600));
+    c.lineTo(bx + 25 * (cw / 600), by - 15 * (ch / 600));
+    c.closePath();
+    c.fillStyle = `rgba(180, 170, 150, 0.08)`;
+    c.fill();
+    c.strokeStyle = `rgba(140, 120, 90, 0.12)`;
+    c.lineWidth = 0.8;
+    c.stroke();
+    // 人
+    c.beginPath();
+    c.arc(bx - 5 * (cw / 600), by - 12 * (ch / 600), 4 * (cw / 600), 0, Math.PI * 2);
+    c.fillStyle = `rgba(140, 120, 90, 0.15)`;
+    c.fill();
+    this.inkStroke(c, bx - 5 * (cw / 600), by - 8 * (ch / 600), bx - 5 * (cw / 600), by, 1.5, `rgba(140, 120, 90, 0.15)`);
+
+    // 水面涟漪
+    for (let i = 0; i < 3; i++) {
+      c.beginPath();
+      c.ellipse(bx, by + 5 * (ch / 600) + i * 8, (20 + i * 15) * (cw / 600), 2, 0, 0, Math.PI * 2);
+      c.strokeStyle = `rgba(140, 160, 190, ${0.06 - i * 0.015})`;
+      c.lineWidth = 0.5;
+      c.stroke();
+    }
+  },
+
+  // ===== 古道 =====
+  drawRoad(ctx, w, h, isFull) {
+    const c = isFull ? ctx : this.ctx;
+    if (!isFull) this.clear();
+    const cw = w || this.canvas.width;
+    const ch = h || this.canvas.height;
+
+    // 远山
+    c.beginPath();
+    c.moveTo(0, ch * 0.55);
+    c.bezierCurveTo(cw * 0.15, ch * 0.4, cw * 0.3, ch * 0.5, cw * 0.5, ch * 0.45);
+    c.bezierCurveTo(cw * 0.7, ch * 0.4, cw * 0.85, ch * 0.48, cw, ch * 0.5);
+    c.lineTo(cw, ch); c.lineTo(0, ch);
+    c.fillStyle = `rgba(100, 90, 70, 0.06)`;
+    c.fill();
+
+    // 古道
+    c.beginPath();
+    c.moveTo(cw * 0.35, ch);
+    c.lineTo(cw * 0.5, ch * 0.6);
+    c.lineTo(cw * 0.52, ch * 0.55);
+    c.lineTo(cw * 0.65, ch);
+    c.fillStyle = `rgba(120, 100, 75, 0.08)`;
+    c.fill();
+
+    // 枯树
+    this.inkStroke(c, cw * 0.82, ch * 0.95, cw * 0.8, ch * 0.6, 4, `rgba(80, 60, 40, 0.15)`);
+    this.inkStroke(c, cw * 0.8, ch * 0.7, cw * 0.72, ch * 0.55, 2, `rgba(80, 60, 40, 0.1)`);
+    this.inkStroke(c, cw * 0.8, ch * 0.65, cw * 0.88, ch * 0.52, 2, `rgba(80, 60, 40, 0.1)`);
+    this.inkStroke(c, cw * 0.8, ch * 0.75, cw * 0.75, ch * 0.68, 1.5, `rgba(80, 60, 40, 0.08)`);
+
+    // 落日余晖
+    const grd = c.createRadialGradient(cw * 0.48, ch * 0.5, 0, cw * 0.48, ch * 0.5, cw * 0.15);
+    grd.addColorStop(0, `rgba(220, 160, 80, 0.06)`);
+    grd.addColorStop(1, `transparent`);
+    c.fillStyle = grd;
+    c.fillRect(0, 0, cw, ch);
+
+    // 飞鸟
+    const drawBird = (bx, by, s) => {
+      c.beginPath();
+      c.moveTo(bx - s, by + s * 0.3);
+      c.quadraticCurveTo(bx - s * 0.5, by - s * 0.3, bx, by);
+      c.quadraticCurveTo(bx + s * 0.5, by - s * 0.3, bx + s, by + s * 0.3);
+      c.strokeStyle = `rgba(80, 70, 60, 0.12)`;
+      c.lineWidth = 0.8;
+      c.stroke();
+    };
+    drawBird(cw * 0.55, ch * 0.35, 8);
+    drawBird(cw * 0.6, ch * 0.32, 6);
+    drawBird(cw * 0.63, ch * 0.36, 5);
   }
+};
+
+// ===== 每题背景配置 =====
+const questionBgs = [
+  { draw: 'drawPlum',       name: '梅花' },
+  { draw: 'drawMoon',       name: '明月' },
+  { draw: 'drawBamboo',     name: '竹林' },
+  { draw: 'drawChrysanthemum', name: '菊花' },
+  { draw: 'drawMountain',   name: '远山' },
+  { draw: 'drawOrchid',     name: '兰草' },
+  { draw: 'drawMist',       name: '烟雨' },
+  { draw: 'drawRoad',       name: '古道' },
+  { draw: 'drawMoon',       name: '明月松' },
+  { draw: 'drawPlum',       name: '寒梅' },
+  { draw: 'drawMist',       name: '江雪' },
+  { draw: 'drawBamboo',     name: '修竹' },
+  { draw: 'drawChrysanthemum', name: '秋菊' },
+  { draw: 'drawOrchid',     name: '幽兰' },
+  { draw: 'drawMountain',   name: '山水' }
+];
+
+// ===== 初始化Canvas和首页四君子缩略图 =====
+InkPainter.init();
+
+function initGentlemenThumbs() {
+  const thumbConfigs = [
+    { id: 'plumThumb', draw: 'drawPlum' },
+    { id: 'orchidThumb', draw: 'drawOrchid' },
+    { id: 'bambooThumb', draw: 'drawBamboo' },
+    { id: 'chrysThumb', draw: 'drawChrysanthemum' }
+  ];
+
+  thumbConfigs.forEach(({ id, draw }) => {
+    const canvas = document.getElementById(id);
+    if (!canvas) return;
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * 2;
+    canvas.height = rect.height * 2;
+    const ctx = canvas.getContext('2d');
+    InkPainter[draw](ctx, canvas.width, canvas.height, true);
+  });
 }
 
+// 延迟初始化缩略图以确保尺寸正确
+setTimeout(initGentlemenThumbs, 100);
+window.addEventListener('resize', () => setTimeout(initGentlemenThumbs, 100));
+
+// ===== 粒子 =====
 function createParticles() {
   const body = document.body;
   for (let i = 0; i < 15; i++) {
@@ -879,170 +1522,169 @@ function createParticles() {
     body.appendChild(p);
   }
 }
-
-createPetals();
 createParticles();
 
-// ===== 题目数据 =====
+// ===== 题目数据（白话版，保留古典意蕴） =====
 const questions = [
   {
-    scene: "春夜微雨，你独坐窗前，忽闻远山传来一阵悠扬笛声——",
-    text: "你此刻最想做些什么？",
+    scene: "一个春雨绵绵的夜晚，你独自坐在窗边，忽然听到远处山间传来一阵笛声。",
+    text: "这时候你更想做什么？",
     options: [
-      { text: "提笔赋诗，将这笛声化作千古绝句", scores: { libai: 3, su: 2 } },
-      { text: "静坐聆听，让心随笛声飘向远方山川", scores: { wangwei: 3, tao: 2 } },
-      { text: "推窗相望，想寻那吹笛之人共饮一杯", scores: { su: 3, libai: 2 } },
-      { text: "心中忽生忧思，想起天下苍生尚未安宁", scores: { dufu: 3, quyuan: 2 } }
+      { text: "灵感来了，赶紧写一首诗记录下这个瞬间", scores: { libai: 3, su: 2 } },
+      { text: "什么都不做，就这样安静地听着，让心飞到笛声响起的远方", scores: { wangwei: 3, tao: 2 } },
+      { text: "好想找到那个吹笛子的人，一起喝一杯聊聊天", scores: { su: 3, libai: 2 } },
+      { text: "笛声好听，但心里突然有些沉重，想到还有很多人的生活并不安宁", scores: { dufu: 3, quyuan: 2 } }
     ]
   },
   {
-    scene: "你被贬谪到偏远之地，亲友渐远，前路茫茫——",
-    text: "面对命运的捉弄，你会如何自处？",
+    scene: "因为一些原因，你被迫离开熟悉的地方，去到一个偏远的陌生城市。朋友联系少了，未来也看不清。",
+    text: "面对这种情况，你的第一反应是？",
     options: [
-      { text: "竹杖芒鞋，一蓑烟雨，何惧途中风雨", scores: { su: 4 } },
-      { text: "且放白鹿青崖间，须行即骑访名山", scores: { libai: 3, tao: 2 } },
-      { text: "安得广厦千万间，忧思更深", scores: { dufu: 4 } },
-      { text: "采菊东篱，归隐田园方为正道", scores: { tao: 4 } }
+      { text: "既来之则安之，换个地方也能活得精彩", scores: { su: 4 } },
+      { text: "干脆到处走走看看，就当是一次旅行", scores: { libai: 3, tao: 2 } },
+      { text: "一直在想那些处境更难的人，心情更沉重了", scores: { dufu: 4 } },
+      { text: "正好远离喧嚣，过自己想要的日子", scores: { tao: 4 } }
     ]
   },
   {
-    scene: "友人设宴相邀，席间美酒佳肴，高朋满座——",
-    text: "酒过三巡，你会？",
+    scene: "好朋友攒了个局，叫了一堆人一起吃饭喝酒，气氛很热闹。",
+    text: "酒过几巡之后，你通常是什么状态？",
     options: [
-      { text: "举杯邀明月，对影成三人，不醉不归", scores: { libai: 4 } },
-      { text: "诗酒趁年华，即兴作诗助兴", scores: { su: 3, libai: 1 } },
-      { text: "浅尝辄止，心思已飘向窗外山水", scores: { wangwei: 3, tao: 1 } },
-      { text: "借酒浇愁，感怀故国山河破碎", scores: { xinqiji: 3, liqingzhao: 1 } }
+      { text: "越喝越嗨，恨不得拉着大家通宵聊", scores: { libai: 4 } },
+      { text: "氛围到了，随口吟几句诗助助兴", scores: { su: 3, libai: 1 } },
+      { text: "喝一点就好，心思已经飘到窗外的月亮上了", scores: { wangwei: 3, tao: 1 } },
+      { text: "酒入愁肠，想起一些放不下的心事", scores: { xinqiji: 3, liqingzhao: 1 } }
     ]
   },
   {
-    scene: "明月当空，清辉万里。你漫步于庭院之中——",
-    text: "此情此景，你心中涌起的第一个念头是？",
+    scene: "今晚的月亮特别圆特别亮，你一个人走在回家的路上。",
+    text: "看着月亮，你脑海里冒出的第一个想法是？",
     options: [
-      { text: "但愿人长久，千里共婵娟", scores: { su: 4 } },
-      { text: "举头望明月，低头思故乡", scores: { libai: 3, dufu: 1 } },
-      { text: "月出惊山鸟，时鸣春涧中", scores: { wangwei: 4 } },
-      { text: "明月几时有？把酒问青天", scores: { su: 3, quyuan: 1 } }
+      { text: "希望远方的朋友此刻也在看同一轮月亮", scores: { su: 4 } },
+      { text: "忽然很想家，已经很久没回去了", scores: { libai: 3, dufu: 1 } },
+      { text: "月光洒在树上的样子真好看，一切都很安静", scores: { wangwei: 4 } },
+      { text: "望着月亮发呆，人生到底是为了什么呢", scores: { su: 3, quyuan: 1 } }
     ]
   },
   {
-    scene: "路过一座废弃的古战场，残旗断甲，荒草萋萋——",
-    text: "你会有怎样的感慨？",
+    scene: "你偶然路过一片古战场的遗址，杂草丛生，只有一块残碑还在。",
+    text: "看到这样的场景，你心里会想什么？",
     options: [
-      { text: "醉里挑灯看剑，梦回吹角连营", scores: { xinqiji: 4 } },
-      { text: "国破山河在，城春草木深", scores: { dufu: 4 } },
-      { text: "逝者如斯，不如归去", scores: { tao: 3, wangwei: 1 } },
-      { text: "长太息以掩涕兮，哀民生之多艰", scores: { quyuan: 4 } }
+      { text: "恍惚间仿佛听到了当年的号角声和战马嘶鸣", scores: { xinqiji: 4 } },
+      { text: "国家兴盛衰败，最苦的永远是普通老百姓", scores: { dufu: 4 } },
+      { text: "一切都会过去的，不如好好活在当下", scores: { tao: 3, wangwei: 1 } },
+      { text: "当年的英雄和理想，都被时间埋没了，有些心酸", scores: { quyuan: 4 } }
     ]
   },
   {
-    scene: "你在山中隐居，一位故人来访，劝你出仕为官——",
-    text: "你会如何回应？",
+    scene: "你过着一间小屋、几亩薄田的简单生活。有天一位老朋友来找你，劝你回去做一份「更有前途」的工作。",
+    text: "你会怎么回答他？",
     options: [
-      { text: "久在樊笼里，复得返自然，不去不去", scores: { tao: 4 } },
-      { text: "苟利国家生死以，若有所用，当仁不让", scores: { dufu: 3, xinqiji: 2 } },
-      { text: "行到水穷处，坐看云起时，去留无意", scores: { wangwei: 4 } },
-      { text: "治国平天下本是我的理想，但须得明主", scores: { quyuan: 3, su: 1 } }
+      { text: "我现在这样就挺好的，真的不想回去了", scores: { tao: 4 } },
+      { text: "如果那份工作真的能帮到更多人，我愿意考虑", scores: { dufu: 3, xinqiji: 2 } },
+      { text: "坐下来喝杯茶，聊着聊着就不谈这个话题了", scores: { wangwei: 4 } },
+      { text: "如果是为了正确的理想，我愿意出去闯一闯", scores: { quyuan: 3, su: 1 } }
     ]
   },
   {
-    scene: "深夜难眠，你起身翻阅旧日手稿——",
-    text: "看到曾经写下的文字，你最深的感受是？",
+    scene: "深夜睡不着，你翻出了以前写的日记或者旧文章来看。",
+    text: "读着当年的文字，你最真实的感受是？",
     options: [
-      { text: "物是人非事事休，欲语泪先流", scores: { liqingzhao: 4 } },
-      { text: "此情可待成追忆，只是当时已惘然", scores: { su: 3, liqingzhao: 1 } },
-      { text: "文章千古事，得失寸心知", scores: { dufu: 3, su: 1 } },
-      { text: "过去的文字如水中月，不可执著", scores: { wangwei: 3, tao: 1 } }
+      { text: "很多事情变了，人也变了，有些难过", scores: { liqingzhao: 4 } },
+      { text: "好像在看另一个人的人生，有些感慨但不后悔", scores: { su: 3, liqingzhao: 1 } },
+      { text: "当时写得还不错，但还是有些幼稚的地方", scores: { dufu: 3, su: 1 } },
+      { text: "过去就过去了，写得好不好都不重要", scores: { wangwei: 3, tao: 1 } }
     ]
   },
   {
-    scene: "国家危难之际，你虽为文人身不由己——",
-    text: "若可以选择，你愿意怎么做？",
+    scene: "假设你的国家遇到了重大危机，但你只是一个普通人。",
+    text: "在这种时候，你最想做什么？",
     options: [
-      { text: "投笔从戎，马革裹尸亦无憾", scores: { xinqiji: 4 } },
-      { text: "以笔为剑，写下千古绝唱以醒世人", scores: { quyuan: 3, dufu: 2 } },
-      { text: "天下兴亡自有定数，不如独善其身", scores: { tao: 2, wangwei: 2 } },
-      { text: "入世则兼济天下，出世则独善其身", scores: { su: 4 } }
+      { text: "直接上前线，哪怕只是一个普通人也能出一份力", scores: { xinqiji: 4 } },
+      { text: "用手中的笔写下最真实的东西，唤醒更多人", scores: { quyuan: 3, dufu: 2 } },
+      { text: "管好自己和身边的人，不给别人添乱", scores: { tao: 2, wangwei: 2 } },
+      { text: "能做什么就做什么，做了就不要后悔", scores: { su: 4 } }
     ]
   },
   {
-    scene: "暮色四合，你独自登上一座高楼，凭栏远眺——",
-    text: "眼前的景象让你想到了什么？",
+    scene: "黄昏时分，你一个人爬上了一座高楼的顶层，望着远方的城市和天际线。",
+    text: "站在那里，你脑海里在想什么？",
     options: [
-      { text: "落霞与孤鹜齐飞，秋水共长天一色", scores: { wangwei: 3, su: 2 } },
-      { text: "念天地之悠悠，独怆然而涕下", scores: { quyuan: 3, dufu: 2 } },
-      { text: "把吴钩看了，栏杆拍遍，无人会登临意", scores: { xinqiji: 4 } },
-      { text: "大江东去，浪淘尽，千古风流人物", scores: { su: 3, xinqiji: 1 } }
+      { text: "天地真辽阔，人在其中好渺小啊", scores: { wangwei: 3, su: 2 } },
+      { text: "想到那些曾经为理想付出一切的人，眼眶有些湿润", scores: { quyuan: 3, dufu: 2 } },
+      { text: "心里有一团火在烧，觉得自己应该去做点什么", scores: { xinqiji: 4 } },
+      { text: "历史上有多少英雄豪杰，最后都不过是过眼云烟", scores: { su: 3, xinqiji: 1 } }
     ]
   },
   {
-    scene: "你面前有一杯好酒、一卷好书、一支好笔——",
-    text: "此刻你最先伸手拿的是？",
+    scene: "桌上摆着三样东西：一杯上好的酒、一本一直想看的书、一支品质很好的笔。",
+    text: "你会先拿起哪个？",
     options: [
-      { text: "当然是酒！人生得意须尽欢", scores: { libai: 4 } },
-      { text: "展卷而读，书中自有大千世界", scores: { wangwei: 3, tao: 1 } },
-      { text: "提笔挥毫，写尽心中所想", scores: { su: 3, liqingzhao: 1 } },
-      { text: "酒与笔缺一不可，边饮边写方得真趣", scores: { su: 2, libai: 2 } }
+      { text: "先喝酒！人生苦短，开心最重要", scores: { libai: 4 } },
+      { text: "翻开那本书，先沉浸一会儿再说", scores: { wangwei: 3, tao: 1 } },
+      { text: "拿起笔，有些话不写下来就忘了", scores: { su: 3, liqingzhao: 1 } },
+      { text: "左手酒右手笔，边喝边写才痛快", scores: { su: 2, libai: 2 } }
     ]
   },
   {
-    scene: "你与友人泛舟湖上，忽遇大雾，迷失方向——",
-    text: "你会如何应对？",
+    scene: "你和朋友在湖上划船，突然起了大雾，完全看不清方向了。",
+    text: "这时候你会？",
     options: [
-      { text: "纵一苇之所如，凌万顷之茫然，随它去吧", scores: { su: 4 } },
-      { text: "雾中行舟别有意境，不如细细品味", scores: { wangwei: 4 } },
-      { text: "大雾迷途正似人生，何不乘兴而归", scores: { tao: 3, su: 1 } },
-      { text: "安能摧眉折腰事权贵，迷路又如何", scores: { libai: 3, quyuan: 1 } }
+      { text: "随它去吧，反正也不急着到岸，雾中划船还挺浪漫的", scores: { su: 4 } },
+      { text: "雾里的湖面特别美，先好好欣赏再说", scores: { wangwei: 4 } },
+      { text: "迷路就像人生一样，不如掉头回去下次再来", scores: { tao: 3, su: 1 } },
+      { text: "方向不重要，重要的是和谁在一起", scores: { libai: 3, quyuan: 1 } }
     ]
   },
   {
-    scene: "有人当众质疑你的才华与能力——",
-    text: "你会如何反应？",
+    scene: "有人当着很多人的面说你不行，质疑你的能力。",
+    text: "你心里是怎么想的？",
     options: [
-      { text: "天生我材必有用，不屑辩驳", scores: { libai: 4 } },
-      { text: "谈笑间化解，对方不过是过眼云烟", scores: { su: 4 } },
-      { text: "内心受伤但表面平静，回家后写词抒怀", scores: { liqingzhao: 3, dufu: 1 } },
-      { text: "众人皆醉我独醒，不必强求理解", scores: { quyuan: 3, tao: 1 } }
+      { text: "我行不行我自己清楚，懒得搭理", scores: { libai: 4 } },
+      { text: "笑一笑就过去了，懂我的人自然懂", scores: { su: 4 } },
+      { text: "表面没什么，但心里确实被刺痛了，晚上会反复想", scores: { liqingzhao: 3, dufu: 1 } },
+      { text: "别人不理解正常，这个世界本来就很难被理解", scores: { quyuan: 3, tao: 1 } }
     ]
   },
   {
-    scene: "秋风萧瑟，黄叶纷飞。你在路上行走——",
-    text: "你心中浮现的意境更接近？",
+    scene: "秋天到了，你走在一条铺满落叶的路上，风吹过来有些凉。",
+    text: "这个画面让你最联想到什么心情？",
     options: [
-      { text: "无边落木萧萧下，不尽长江滚滚来", scores: { dufu: 4 } },
-      { text: "停车坐爱枫林晚，霜叶红于二月花", scores: { wangwei: 3, su: 1 } },
-      { text: "满地黄花堆积，憔悴损", scores: { liqingzhao: 4 } },
-      { text: "秋风起兮白云飞，草木黄落兮雁南归", scores: { quyuan: 3, xinqiji: 1 } }
+      { text: "有些感慨，时间过得太快，很多东西留不住", scores: { dufu: 4 } },
+      { text: "秋天的色彩真美，停下来多看几眼", scores: { wangwei: 3, su: 1 } },
+      { text: "莫名有些伤感，好像失去了什么又说不上来", scores: { liqingzhao: 4 } },
+      { text: "一切都在变化中，这也是一种美", scores: { quyuan: 3, xinqiji: 1 } }
     ]
   },
   {
-    scene: "有人送你一件名贵宝物，价值连城——",
-    text: "你会如何处置？",
+    scene: "有人送了你一件非常贵重的礼物，市场价值很高。",
+    text: "你会怎么处理？",
     options: [
-      { text: "千金散尽还复来，不如换酒请友", scores: { libai: 4 } },
-      { text: "身外之物，如浮云过眼", scores: { wangwei: 3, tao: 2 } },
-      { text: "好好珍藏，传之后世", scores: { liqingzhao: 3, dufu: 1 } },
-      { text: "有用则留，无用则赠予有缘人", scores: { su: 4 } }
+      { text: "卖了换钱，请朋友们吃一顿大餐", scores: { libai: 4 } },
+      { text: "东西再好也是身外之物，不太放在心上", scores: { wangwei: 3, tao: 2 } },
+      { text: "好好收起来，毕竟是别人的一份心意", scores: { liqingzhao: 3, dufu: 1 } },
+      { text: "看有没有需要的人，送给比我更需要它的人", scores: { su: 4 } }
     ]
   },
   {
-    scene: "若此生只能用一句话来概括你的追求——",
-    text: "你会选择哪一句？",
+    scene: "如果只能用一句话来代表你的人生态度。",
+    text: "下面哪一句最接近你？",
     options: [
-      { text: "长风破浪会有时，直挂云帆济沧海", scores: { libai: 4 } },
-      { text: "人生如逆旅，我亦是行人", scores: { su: 4 } },
-      { text: "此心安处是吾乡", scores: { su: 3, tao: 1 } },
-      { text: "亦余心之所善兮，虽九死其犹未悔", scores: { quyuan: 4 } }
+      { text: "不管怎样，总有一天会好起来的", scores: { libai: 4 } },
+      { text: "人生就是一段旅程，每个人都是过客", scores: { su: 4 } },
+      { text: "心安的地方就是家，在哪都一样", scores: { su: 3, tao: 1 } },
+      { text: "只要是我认定的事，再难也不会放弃", scores: { quyuan: 4 } }
     ]
   }
 ];
 
-// ===== 文人结果数据 =====
+// ===== 文人结果数据（含真实古画肖像URL） =====
 const literatiResults = {
   su: {
     name: "苏轼",
     dynasty: "北宋 · 东坡居士",
-    portraitEmoji: "🧓",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/9/98/Su_shi.jpg",
+    portraitAlt: "苏轼画像 · 元赵孟頫绘",
     poem: "莫听穿林打叶声，何妨吟啸且徐行。\n竹杖芒鞋轻胜马，谁怕？\n一蓑烟雨任平生。",
     poemTitle: "《定风波·莫听穿林打叶声》",
     traits: ["豁达洒脱", "随遇而安", "诗酒风流", "人间烟火", "笑对人生"],
@@ -1052,7 +1694,8 @@ const literatiResults = {
   libai: {
     name: "李白",
     dynasty: "盛唐 · 谪仙人",
-    portraitEmoji: "🦅",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/4/4c/LiBai.jpg",
+    portraitAlt: "李白行吟图 · 南宋梁楷绘",
     poem: "君不见黄河之水天上来，\n奔流到海不复回。\n君不见高堂明镜悲白发，\n朝如青丝暮成雪。",
     poemTitle: "《将进酒》",
     traits: ["豪放不羁", "浪漫至极", "自由灵魂", "诗仙风骨", "天马行空"],
@@ -1062,7 +1705,8 @@ const literatiResults = {
   dufu: {
     name: "杜甫",
     dynasty: "盛唐 · 少陵野老",
-    portraitEmoji: "📖",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Du_Fu.jpg",
+    portraitAlt: "杜甫画像 · 晚笑堂竹庄画传",
     poem: "安得广厦千万间，\n大庇天下寒士俱欢颜！\n风雨不动安如山。\n呜呼！何时眼前突兀见此屋，\n吾庐独破受冻死亦足！",
     poemTitle: "《茅屋为秋风所破歌》",
     traits: ["心怀天下", "忧国忧民", "深沉厚重", "悲悯之心", "坚韧不拔"],
@@ -1072,7 +1716,8 @@ const literatiResults = {
   wangwei: {
     name: "王维",
     dynasty: "盛唐 · 诗佛",
-    portraitEmoji: "🏔️",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/d/db/Wang_Wei.jpg",
+    portraitAlt: "王维画像 · 晚笑堂竹庄画传",
     poem: "空山新雨后，天气晚来秋。\n明月松间照，清泉石上流。\n竹喧归浣女，莲动下渔舟。\n随意春芳歇，王孙自可留。",
     poemTitle: "《山居秋暝》",
     traits: ["空灵澄澈", "诗中有画", "禅意深邃", "淡泊宁静", "超然物外"],
@@ -1082,7 +1727,8 @@ const literatiResults = {
   xinqiji: {
     name: "辛弃疾",
     dynasty: "南宋 · 稼轩居士",
-    portraitEmoji: "⚔️",
+    portrait: null,
+    portraitAlt: "辛弃疾 · 壮怀激烈",
     poem: "醉里挑灯看剑，梦回吹角连营。\n八百里分麾下炙，五十弦翻塞外声，\n沙场秋点兵。",
     poemTitle: "《破阵子·为陈同甫赋壮词以寄之》",
     traits: ["壮怀激烈", "铁骨柔情", "豪气干云", "家国情怀", "英雄本色"],
@@ -1092,7 +1738,8 @@ const literatiResults = {
   liqingzhao: {
     name: "李清照",
     dynasty: "两宋 · 易安居士",
-    portraitEmoji: "🌸",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/3/3e/%E6%9D%8E%E6%B8%85%E7%85%A7%E7%95%AB%E5%83%8F.jpg",
+    portraitAlt: "李清照画像 · 古代工笔画",
     poem: "寻寻觅觅，冷冷清清，\n凄凄惨惨戚戚。\n乍暖还寒时候，最难将息。\n三杯两盏淡酒，\n怎敌他、晚来风急！",
     poemTitle: "《声声慢·寻寻觅觅》",
     traits: ["才情绝世", "敏感细腻", "至情至性", "清冷孤傲", "词中皇后"],
@@ -1102,7 +1749,8 @@ const literatiResults = {
   tao: {
     name: "陶渊明",
     dynasty: "东晋 · 五柳先生",
-    portraitEmoji: "🌾",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/9/98/Tao_Qian.jpg",
+    portraitAlt: "陶渊明画像 · 晚笑堂竹庄画传",
     poem: "结庐在人境，而无车马喧。\n问君何能尔？心远地自偏。\n采菊东篱下，悠然见南山。\n山气日夕佳，飞鸟相与还。",
     poemTitle: "《饮酒·其五》",
     traits: ["淡泊名利", "归隐田园", "率真自然", "自在从容", "悠然自得"],
@@ -1112,7 +1760,8 @@ const literatiResults = {
   quyuan: {
     name: "屈原",
     dynasty: "战国 · 三闾大夫",
-    portraitEmoji: "🌊",
+    portrait: "https://upload.wikimedia.org/wikipedia/commons/f/fd/QuYuan.jpg",
+    portraitAlt: "屈原画像 · 明三才图会",
     poem: "长太息以掩涕兮，哀民生之多艰。\n亦余心之所善兮，虽九死其犹未悔。\n路漫漫其修远兮，吾将上下而求索。",
     poemTitle: "《离骚》",
     traits: ["高洁不屈", "至死不渝", "家国情怀", "理想主义", "九死不悔"],
@@ -1129,6 +1778,26 @@ function initScores() {
   scores = {};
   const keys = Object.keys(literatiResults);
   keys.forEach(k => scores[k] = 0);
+}
+
+function setQuestionBg(qIndex) {
+  const config = questionBgs[qIndex];
+  const canvas = document.getElementById('inkCanvas');
+
+  // 淡出
+  canvas.classList.remove('active');
+
+  setTimeout(() => {
+    InkPainter.clear();
+    InkPainter[config.draw]();
+    canvas.classList.add('active');
+  }, 600);
+}
+
+function clearQuestionBg() {
+  const canvas = document.getElementById('inkCanvas');
+  canvas.classList.remove('active');
+  setTimeout(() => InkPainter.clear(), 1200);
 }
 
 function startQuiz() {
@@ -1150,6 +1819,9 @@ function renderQuestion() {
   document.getElementById('progressPct').textContent = pct + '%';
   document.getElementById('progressFill').style.width = pct + '%';
 
+  // 设置背景
+  setQuestionBg(currentQuestion);
+
   let html = `<div class="q-label">第${['一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五'][currentQuestion]}题</div>`;
   html += `<div class="q-scene">${q.scene}</div>`;
   html += `<div class="q-text">${q.text}</div>`;
@@ -1164,7 +1836,7 @@ function renderQuestion() {
 
   card.innerHTML = html;
   card.style.animation = 'none';
-  card.offsetHeight; // reflow
+  card.offsetHeight;
   card.style.animation = 'slideIn 0.5s ease';
 }
 
@@ -1172,22 +1844,20 @@ function selectOption(index) {
   const q = questions[currentQuestion];
   const opt = q.options[index];
 
-  // 计分
   Object.entries(opt.scores).forEach(([key, val]) => {
     scores[key] = (scores[key] || 0) + val;
   });
 
-  // 视觉反馈
   const btns = document.querySelectorAll('.option-btn');
   btns.forEach(b => b.classList.remove('selected'));
   btns[index].classList.add('selected');
 
-  // 下一题或显示结果
   setTimeout(() => {
     currentQuestion++;
     if (currentQuestion < 15) {
       renderQuestion();
     } else {
+      clearQuestionBg();
       showLoading();
     }
   }, 400);
@@ -1203,12 +1873,10 @@ function showLoading() {
 }
 
 function showResult() {
-  // 计算结果
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const winner = sorted[0][0];
   const result = literatiResults[winner];
 
-  // 获取前3名作为同类文人
   const kindred = sorted.slice(1, 4).map(([key, score]) => ({
     ...literatiResults[key],
     matchPct: Math.round((score / sorted[0][1]) * 100)
@@ -1219,6 +1887,32 @@ function showResult() {
 
   const content = document.getElementById('resultContent');
 
+  // 画像部分 - 有真实画像用图片，辛弃疾用书法风替代
+  let portraitHTML = '';
+  if (result.portrait) {
+    portraitHTML = `
+      <div class="portrait-frame">
+        <div class="portrait-corner tl"></div>
+        <div class="portrait-corner tr"></div>
+        <div class="portrait-corner bl"></div>
+        <div class="portrait-corner br"></div>
+        <img src="${result.portrait}" alt="${result.portraitAlt}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+        <div class="portrait-placeholder" style="display:none;font-size:60px;opacity:0.3;color:var(--gold);">⚔️</div>
+      </div>`;
+  } else {
+    // 辛弃疾 - 用书法风格文字
+    portraitHTML = `
+      <div class="portrait-frame" style="flex-direction:column;gap:8px;">
+        <div class="portrait-corner tl"></div>
+        <div class="portrait-corner tr"></div>
+        <div class="portrait-corner bl"></div>
+        <div class="portrait-corner br"></div>
+        <div style="font-family:'Ma Shan Zheng',cursive;font-size:72px;color:var(--gold);opacity:0.6;line-height:1;">弃疾</div>
+        <div style="font-size:12px;color:var(--text-muted);letter-spacing:4px;font-weight:300;">醉里挑灯看剑</div>
+        <div style="font-size:10px;color:var(--text-muted);opacity:0.5;margin-top:4px;">南宋·稼轩居士</div>
+      </div>`;
+  }
+
   let html = `
     <div class="result-header">
       <div class="label">✦ 你的文人灵魂 ✦</div>
@@ -1226,13 +1920,7 @@ function showResult() {
       <div class="dynasty">${result.dynasty}</div>
     </div>
 
-    <div class="portrait-frame">
-      <div class="portrait-corner tl"></div>
-      <div class="portrait-corner tr"></div>
-      <div class="portrait-corner bl"></div>
-      <div class="portrait-corner br"></div>
-      <div class="portrait-placeholder" style="font-size:60px;">${result.portraitEmoji}</div>
-    </div>
+    ${portraitHTML}
 
     <div class="poem-card">
       <div class="poem-source">—— 最贴合你灵魂的诗句 ——</div>
@@ -1271,7 +1959,6 @@ function showResult() {
 }
 
 function shareResult() {
-  // 复制结果文字到剪贴板
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
   const winner = sorted[0][0];
   const result = literatiResults[winner];
@@ -1280,7 +1967,7 @@ function shareResult() {
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
-      alert('✨ 结果已复制到剪贴板，快去分享吧！');
+      alert('结果已复制到剪贴板，快去分享吧！');
     }).catch(() => {
       alert('复制失败，请手动复制分享~');
     });
