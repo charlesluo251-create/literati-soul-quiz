@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>千年一梦 · 测测你是哪位文人墨客</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;600;700;900&family=Ma+Shan+Zheng&display=swap');
+
+  :root {
+    --bg-primary: #0a0a12;
+    --bg-card: rgba(20, 18, 30, 0.85);
+    --gold: #d4a853;
+    --gold-light: #f0d48a;
+    --gold-dark: #a07830;
+    --text-primary: #e8e0d0;
+    --text-secondary: #a09882;
+    --text-muted: #6b6356;
+    --ink: #2a2540;
+    --border: rgba(212, 168, 83, 0.2);
+    --red-accent: #c45c4a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Serif SC', serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ===== 动态背景 ===== */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .bg-layer::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(212, 168, 83, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(120, 80, 40, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(42, 37, 64, 0.3) 0%, transparent 70%);
+    animation: bgFloat 30s ease-in-out infinite;
+  }
+
+  @keyframes bgFloat {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(2%, -1%) rotate(1deg); }
+    66% { transform: translate(-1%, 2%) rotate(-1deg); }
+  }
+
+  /* 飘落花瓣 */
+  .petal {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .petal::before {
+    content: '🌸';
+    font-size: 14px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  @keyframes petalFall {
+    0% { opacity: 0; transform: translateY(-20px) rotate(0deg) scale(0.8); }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.4; }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.4); }
+  }
+
+  /* 山水剪影 */
+  .mountain-bg {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40vh;
+    z-index: 0;
+    opacity: 0.06;
+    background:
+      linear-gradient(135deg, transparent 33%, var(--gold-dark) 33%, var(--gold-dark) 34%, transparent 34%),
+      linear-gradient(225deg, transparent 33%, var(--gold-dark) 33%, var(--gold-dark) 34%, transparent 34%);
+    background-size: 80px 140px;
+  }
+
+  /* ===== 容器 ===== */
+  .container {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ===== 首页 ===== */
+  .start-page {
+    text-align: center;
+    animation: fadeIn 1.2s ease;
+  }
+
+  .start-page .title-group {
+    margin-bottom: 20px;
+  }
+
+  .start-page .sub-title {
+    font-size: 14px;
+    letter-spacing: 8px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+
+  .start-page h1 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: clamp(42px, 8vw, 68px);
+    color: var(--gold-light);
+    line-height: 1.3;
+    text-shadow: 0 0 40px rgba(212, 168, 83, 0.2);
+    margin-bottom: 12px;
+  }
+
+  .start-page .divider {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 24px auto;
+  }
+
+  .start-page .description {
+    font-size: 15px;
+    line-height: 2;
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto 40px;
+    font-weight: 300;
+  }
+
+  .start-page .description em {
+    color: var(--gold-light);
+    font-style: normal;
+  }
+
+  /* 装饰画框 */
+  .frame-decoration {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 36px;
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(212, 168, 83, 0.05) 0%, transparent 70%);
+  }
+
+  .frame-decoration::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    border-radius: 4px;
+  }
+
+  .frame-decoration .ink-text {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 48px;
+    color: var(--gold);
+    opacity: 0.7;
+    writing-mode: vertical-rl;
+    letter-spacing: 12px;
+  }
+
+  /* 文人列表预览 */
+  .literati-preview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .literati-preview span {
+    font-size: 13px;
+    color: var(--text-muted);
+    padding: 4px 12px;
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    border-radius: 20px;
+    font-weight: 300;
+  }
+
+  /* 按钮 */
+  .btn-primary {
+    display: inline-block;
+    padding: 16px 56px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    color: var(--bg-primary);
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 4px;
+    font-weight: 600;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(212, 168, 83, 0.3);
+  }
+
+  .btn-primary:hover::before {
+    transform: translateX(100%);
+  }
+
+  /* ===== 问卷页 ===== */
+  .quiz-page {
+    width: 100%;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .quiz-page.hidden { display: none; }
+
+  /* 进度条 */
+  .progress-bar {
+    width: 100%;
+    margin-bottom: 48px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .progress-info .current-q {
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 2px;
+    background: rgba(212, 168, 83, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(212, 168, 83, 0.4);
+  }
+
+  /* 问题卡片 */
+  .question-card {
+    animation: slideIn 0.5s ease;
+  }
+
+  .question-card .q-label {
+    font-size: 12px;
+    color: var(--gold-dark);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+
+  .question-card .q-text {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: clamp(22px, 4vw, 28px);
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 36px;
+    text-shadow: 0 0 20px rgba(232, 224, 208, 0.1);
+  }
+
+  .question-card .q-scene {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 300;
+    line-height: 1.8;
+    margin-bottom: 28px;
+    padding-left: 16px;
+    border-left: 2px solid var(--gold-dark);
+  }
+
+  /* 选项 */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    background: var(--bg-card);
+    border: 1px solid rgba(212, 168, 83, 0.08);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    text-align: left;
+    font-family: 'Noto Serif SC', serif;
+  }
+
+  .option-btn:hover {
+    border-color: rgba(212, 168, 83, 0.3);
+    background: rgba(212, 168, 83, 0.06);
+    transform: translateX(4px);
+  }
+
+  .option-btn .option-label {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(212, 168, 83, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--gold);
+    flex-shrink: 0;
+    transition: all 0.35s ease;
+    font-weight: 300;
+  }
+
+  .option-btn:hover .option-label {
+    border-color: var(--gold);
+    background: rgba(212, 168, 83, 0.15);
+  }
+
+  .option-btn .option-text {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-weight: 300;
+    transition: color 0.35s ease;
+  }
+
+  .option-btn:hover .option-text {
+    color: var(--text-primary);
+  }
+
+  .option-btn.selected {
+    border-color: var(--gold);
+    background: rgba(212, 168, 83, 0.1);
+  }
+
+  .option-btn.selected .option-label {
+    background: var(--gold);
+    color: var(--bg-primary);
+    border-color: var(--gold);
+  }
+
+  .option-btn.selected .option-text {
+    color: var(--gold-light);
+  }
+
+  /* ===== 结果页 ===== */
+  .result-page {
+    width: 100%;
+    animation: fadeIn 1s ease;
+  }
+
+  .result-page.hidden { display: none; }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .result-header .label {
+    font-size: 13px;
+    color: var(--gold-dark);
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .result-header h2 {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: clamp(48px, 10vw, 72px);
+    color: var(--gold-light);
+    text-shadow: 0 0 60px rgba(212, 168, 83, 0.25);
+    margin-bottom: 8px;
+  }
+
+  .result-header .dynasty {
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 4px;
+    font-weight: 300;
+  }
+
+  /* 文人画像 */
+  .portrait-frame {
+    width: 280px;
+    height: 360px;
+    margin: 0 auto 40px;
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(42, 37, 64, 0.5), rgba(20, 18, 30, 0.8));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .portrait-frame::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .portrait-frame .portrait-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  .portrait-frame .portrait-placeholder {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 80px;
+    color: var(--gold);
+    opacity: 0.15;
+    writing-mode: vertical-rl;
+    letter-spacing: 20px;
+    line-height: 1.2;
+  }
+
+  .portrait-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--gold);
+    z-index: 3;
+  }
+  .portrait-corner.tl { top: 12px; left: 12px; border-top: 1px solid; border-left: 1px solid; }
+  .portrait-corner.tr { top: 12px; right: 12px; border-top: 1px solid; border-right: 1px solid; }
+  .portrait-corner.bl { bottom: 12px; left: 12px; border-bottom: 1px solid; border-left: 1px solid; }
+  .portrait-corner.br { bottom: 12px; right: 12px; border-bottom: 1px solid; border-right: 1px solid; }
+
+  /* 诗词卡片 */
+  .poem-card {
+    text-align: center;
+    padding: 40px 32px;
+    margin-bottom: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .poem-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .poem-card .poem-source {
+    font-size: 13px;
+    color: var(--gold-dark);
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+    font-weight: 300;
+  }
+
+  .poem-card .poem-text {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: clamp(20px, 4vw, 26px);
+    line-height: 2;
+    color: var(--gold-light);
+    text-shadow: 0 0 20px rgba(212, 168, 83, 0.15);
+    letter-spacing: 2px;
+  }
+
+  .poem-card .poem-title {
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  /* 性格解读 */
+  .analysis-section {
+    margin-bottom: 36px;
+  }
+
+  .analysis-section h3 {
+    font-size: 14px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .analysis-section .analysis-text {
+    font-size: 15px;
+    line-height: 2;
+    color: var(--text-secondary);
+    font-weight: 300;
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid rgba(212, 168, 83, 0.06);
+    border-radius: 12px;
+  }
+
+  /* 性格标签 */
+  .trait-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+
+  .trait-tag {
+    font-size: 13px;
+    padding: 6px 18px;
+    border: 1px solid rgba(212, 168, 83, 0.15);
+    border-radius: 20px;
+    color: var(--gold);
+    font-weight: 300;
+    letter-spacing: 2px;
+  }
+
+  /* 同类文人 */
+  .kindred-section {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  .kindred-section h3 {
+    font-size: 13px;
+    color: var(--text-muted);
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+    font-weight: 300;
+  }
+
+  .kindred-list {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .kindred-item {
+    padding: 8px 20px;
+    background: rgba(212, 168, 83, 0.04);
+    border: 1px solid rgba(212, 168, 83, 0.1);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 300;
+  }
+
+  .kindred-item .match-pct {
+    display: block;
+    font-size: 11px;
+    color: var(--gold-dark);
+    margin-top: 2px;
+  }
+
+  /* 操作按钮 */
+  .result-actions {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 14px 44px;
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid rgba(212, 168, 83, 0.3);
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 3px;
+    font-weight: 300;
+    transition: all 0.4s ease;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    background: rgba(212, 168, 83, 0.08);
+  }
+
+  /* ===== 版权 ===== */
+  .copyright {
+    text-align: center;
+    padding: 40px 20px 20px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 200;
+    line-height: 1.8;
+    letter-spacing: 1px;
+  }
+
+  .copyright .copy-line {
+    opacity: 0.6;
+  }
+
+  /* ===== 动画 ===== */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes sealStamp {
+    0% { transform: scale(1.3) rotate(-5deg); opacity: 0; }
+    60% { transform: scale(0.95) rotate(1deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .seal-stamp {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    border: 2px solid var(--red-accent);
+    border-radius: 6px;
+    color: var(--red-accent);
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 20px;
+    line-height: 44px;
+    text-align: center;
+    margin: 0 auto 24px;
+    animation: sealStamp 0.8s ease 0.5s both;
+  }
+
+  /* ===== 加载动画 ===== */
+  .loading-page {
+    text-align: center;
+    animation: fadeIn 1s ease;
+  }
+
+  .loading-page .loading-text {
+    font-family: 'Ma Shan Zheng', cursive;
+    font-size: 24px;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+
+  .loading-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .loading-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.3;
+    animation: dotPulse 1.4s ease infinite;
+  }
+
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes dotPulse {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
+    40% { opacity: 1; transform: scale(1.5); }
+  }
+
+  /* ===== 响应式 ===== */
+  @media (max-width: 640px) {
+    .container { padding: 16px; }
+    .option-btn { padding: 14px 16px; gap: 12px; }
+    .portrait-frame { width: 240px; height: 310px; }
+    .poem-card { padding: 28px 20px; }
+  }
+
+  /* 粒子效果 */
+  .particle {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    animation: particleFade 8s ease-in-out infinite;
+  }
+
+  @keyframes particleFade {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.4; }
+  }
+
+  /* 隐藏类 */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- 背景层 -->
+<div class="bg-layer"></div>
+<div class="mountain-bg"></div>
+
+<!-- 首页 -->
+<div class="container" id="startPage">
+  <div class="start-page">
+    <div class="title-group">
+      <div class="sub-title">千 年 一 梦</div>
+      <h1>你是哪位文人墨客</h1>
+    </div>
+
+    <div class="frame-decoration">
+      <div class="ink-text">诗酒趁年华</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="description">
+      千年之前，有人仗剑天涯，有人独钓寒江<br>
+      有人醉卧长安，有人采菊东篱<br>
+      十五道命题，<em>叩问灵魂深处的文人骨血</em>
+    </p>
+
+    <div class="literati-preview">
+      <span>苏轼</span>
+      <span>李白</span>
+      <span>杜甫</span>
+      <span>王维</span>
+      <span>辛弃疾</span>
+      <span>李清照</span>
+      <span>陶渊明</span>
+      <span>屈原</span>
+    </div>
+
+    <button class="btn-primary" onclick="startQuiz()">开 始 测 试</button>
+  </div>
+
+  <div class="copyright">
+    <div class="copy-line">© 2026 版权所有 · 未经授权禁止转载</div>
+    <div class="copy-line">原创设计 by Charles</div>
+  </div>
+</div>
+
+<!-- 问卷页 -->
+<div class="container" id="quizPage" style="display:none;">
+  <div class="quiz-page">
+    <div class="progress-bar">
+      <div class="progress-info">
+        <span>第 <span class="current-q" id="currentQ">1</span> / 15 题</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="question-card" id="questionCard">
+      <!-- 动态渲染 -->
+    </div>
+  </div>
+</div>
+
+<!-- 加载页 -->
+<div class="container" id="loadingPage" style="display:none;">
+  <div class="loading-page">
+    <div class="seal-stamp">命</div>
+    <div class="loading-text">命运之轮转动中...</div>
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<!-- 结果页 -->
+<div class="container" id="resultPage" style="display:none;">
+  <div class="result-page" id="resultContent">
+    <!-- 动态渲染 -->
+  </div>
+
+  <div class="copyright">
+    <div class="copy-line">© 2026 版权所有 · 未经授权禁止转载</div>
+    <div class="copy-line">原创设计 by Charles</div>
+  </div>
+</div>
+
+<script>
+// ===== 花瓣粒子 =====
+function createPetals() {
+  const body = document.body;
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = (8 + Math.random() * 12) + 's';
+      petal.style.animationDelay = Math.random() * 5 + 's';
+      petal.style.animation = `petalFall ${8 + Math.random() * 12}s linear ${Math.random() * 5}s infinite`;
+      const petals = ['🌸', '🍂', '✿', '❀', '🍃'];
+      petal.innerHTML = `<span style="font-size:${10 + Math.random()*8}px">${petals[Math.floor(Math.random()*petals.length)]}</span>`;
+      body.appendChild(petal);
+    }, i * 800);
+  }
+}
+
+function createParticles() {
+  const body = document.body;
+  for (let i = 0; i < 15; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.top = Math.random() * 100 + 'vh';
+    p.style.animationDelay = Math.random() * 8 + 's';
+    p.style.animationDuration = (6 + Math.random() * 6) + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    body.appendChild(p);
+  }
+}
+
+createPetals();
+createParticles();
+
+// ===== 题目数据 =====
+const questions = [
+  {
+    scene: "春夜微雨，你独坐窗前，忽闻远山传来一阵悠扬笛声——",
+    text: "你此刻最想做些什么？",
+    options: [
+      { text: "提笔赋诗，将这笛声化作千古绝句", scores: { libai: 3, su: 2 } },
+      { text: "静坐聆听，让心随笛声飘向远方山川", scores: { wangwei: 3, tao: 2 } },
+      { text: "推窗相望，想寻那吹笛之人共饮一杯", scores: { su: 3, libai: 2 } },
+      { text: "心中忽生忧思，想起天下苍生尚未安宁", scores: { dufu: 3, quyuan: 2 } }
+    ]
+  },
+  {
+    scene: "你被贬谪到偏远之地，亲友渐远，前路茫茫——",
+    text: "面对命运的捉弄，你会如何自处？",
+    options: [
+      { text: "竹杖芒鞋，一蓑烟雨，何惧途中风雨", scores: { su: 4 } },
+      { text: "且放白鹿青崖间，须行即骑访名山", scores: { libai: 3, tao: 2 } },
+      { text: "安得广厦千万间，忧思更深", scores: { dufu: 4 } },
+      { text: "采菊东篱，归隐田园方为正道", scores: { tao: 4 } }
+    ]
+  },
+  {
+    scene: "友人设宴相邀，席间美酒佳肴，高朋满座——",
+    text: "酒过三巡，你会？",
+    options: [
+      { text: "举杯邀明月，对影成三人，不醉不归", scores: { libai: 4 } },
+      { text: "诗酒趁年华，即兴作诗助兴", scores: { su: 3, libai: 1 } },
+      { text: "浅尝辄止，心思已飘向窗外山水", scores: { wangwei: 3, tao: 1 } },
+      { text: "借酒浇愁，感怀故国山河破碎", scores: { xinqiji: 3, liqingzhao: 1 } }
+    ]
+  },
+  {
+    scene: "明月当空，清辉万里。你漫步于庭院之中——",
+    text: "此情此景，你心中涌起的第一个念头是？",
+    options: [
+      { text: "但愿人长久，千里共婵娟", scores: { su: 4 } },
+      { text: "举头望明月，低头思故乡", scores: { libai: 3, dufu: 1 } },
+      { text: "月出惊山鸟，时鸣春涧中", scores: { wangwei: 4 } },
+      { text: "明月几时有？把酒问青天", scores: { su: 3, quyuan: 1 } }
+    ]
+  },
+  {
+    scene: "路过一座废弃的古战场，残旗断甲，荒草萋萋——",
+    text: "你会有怎样的感慨？",
+    options: [
+      { text: "醉里挑灯看剑，梦回吹角连营", scores: { xinqiji: 4 } },
+      { text: "国破山河在，城春草木深", scores: { dufu: 4 } },
+      { text: "逝者如斯，不如归去", scores: { tao: 3, wangwei: 1 } },
+      { text: "长太息以掩涕兮，哀民生之多艰", scores: { quyuan: 4 } }
+    ]
+  },
+  {
+    scene: "你在山中隐居，一位故人来访，劝你出仕为官——",
+    text: "你会如何回应？",
+    options: [
+      { text: "久在樊笼里，复得返自然，不去不去", scores: { tao: 4 } },
+      { text: "苟利国家生死以，若有所用，当仁不让", scores: { dufu: 3, xinqiji: 2 } },
+      { text: "行到水穷处，坐看云起时，去留无意", scores: { wangwei: 4 } },
+      { text: "治国平天下本是我的理想，但须得明主", scores: { quyuan: 3, su: 1 } }
+    ]
+  },
+  {
+    scene: "深夜难眠，你起身翻阅旧日手稿——",
+    text: "看到曾经写下的文字，你最深的感受是？",
+    options: [
+      { text: "物是人非事事休，欲语泪先流", scores: { liqingzhao: 4 } },
+      { text: "此情可待成追忆，只是当时已惘然", scores: { su: 3, liqingzhao: 1 } },
+      { text: "文章千古事，得失寸心知", scores: { dufu: 3, su: 1 } },
+      { text: "过去的文字如水中月，不可执著", scores: { wangwei: 3, tao: 1 } }
+    ]
+  },
+  {
+    scene: "国家危难之际，你虽为文人身不由己——",
+    text: "若可以选择，你愿意怎么做？",
+    options: [
+      { text: "投笔从戎，马革裹尸亦无憾", scores: { xinqiji: 4 } },
+      { text: "以笔为剑，写下千古绝唱以醒世人", scores: { quyuan: 3, dufu: 2 } },
+      { text: "天下兴亡自有定数，不如独善其身", scores: { tao: 2, wangwei: 2 } },
+      { text: "入世则兼济天下，出世则独善其身", scores: { su: 4 } }
+    ]
+  },
+  {
+    scene: "暮色四合，你独自登上一座高楼，凭栏远眺——",
+    text: "眼前的景象让你想到了什么？",
+    options: [
+      { text: "落霞与孤鹜齐飞，秋水共长天一色", scores: { wangwei: 3, su: 2 } },
+      { text: "念天地之悠悠，独怆然而涕下", scores: { quyuan: 3, dufu: 2 } },
+      { text: "把吴钩看了，栏杆拍遍，无人会登临意", scores: { xinqiji: 4 } },
+      { text: "大江东去，浪淘尽，千古风流人物", scores: { su: 3, xinqiji: 1 } }
+    ]
+  },
+  {
+    scene: "你面前有一杯好酒、一卷好书、一支好笔——",
+    text: "此刻你最先伸手拿的是？",
+    options: [
+      { text: "当然是酒！人生得意须尽欢", scores: { libai: 4 } },
+      { text: "展卷而读，书中自有大千世界", scores: { wangwei: 3, tao: 1 } },
+      { text: "提笔挥毫，写尽心中所想", scores: { su: 3, liqingzhao: 1 } },
+      { text: "酒与笔缺一不可，边饮边写方得真趣", scores: { su: 2, libai: 2 } }
+    ]
+  },
+  {
+    scene: "你与友人泛舟湖上，忽遇大雾，迷失方向——",
+    text: "你会如何应对？",
+    options: [
+      { text: "纵一苇之所如，凌万顷之茫然，随它去吧", scores: { su: 4 } },
+      { text: "雾中行舟别有意境，不如细细品味", scores: { wangwei: 4 } },
+      { text: "大雾迷途正似人生，何不乘兴而归", scores: { tao: 3, su: 1 } },
+      { text: "安能摧眉折腰事权贵，迷路又如何", scores: { libai: 3, quyuan: 1 } }
+    ]
+  },
+  {
+    scene: "有人当众质疑你的才华与能力——",
+    text: "你会如何反应？",
+    options: [
+      { text: "天生我材必有用，不屑辩驳", scores: { libai: 4 } },
+      { text: "谈笑间化解，对方不过是过眼云烟", scores: { su: 4 } },
+      { text: "内心受伤但表面平静，回家后写词抒怀", scores: { liqingzhao: 3, dufu: 1 } },
+      { text: "众人皆醉我独醒，不必强求理解", scores: { quyuan: 3, tao: 1 } }
+    ]
+  },
+  {
+    scene: "秋风萧瑟，黄叶纷飞。你在路上行走——",
+    text: "你心中浮现的意境更接近？",
+    options: [
+      { text: "无边落木萧萧下，不尽长江滚滚来", scores: { dufu: 4 } },
+      { text: "停车坐爱枫林晚，霜叶红于二月花", scores: { wangwei: 3, su: 1 } },
+      { text: "满地黄花堆积，憔悴损", scores: { liqingzhao: 4 } },
+      { text: "秋风起兮白云飞，草木黄落兮雁南归", scores: { quyuan: 3, xinqiji: 1 } }
+    ]
+  },
+  {
+    scene: "有人送你一件名贵宝物，价值连城——",
+    text: "你会如何处置？",
+    options: [
+      { text: "千金散尽还复来，不如换酒请友", scores: { libai: 4 } },
+      { text: "身外之物，如浮云过眼", scores: { wangwei: 3, tao: 2 } },
+      { text: "好好珍藏，传之后世", scores: { liqingzhao: 3, dufu: 1 } },
+      { text: "有用则留，无用则赠予有缘人", scores: { su: 4 } }
+    ]
+  },
+  {
+    scene: "若此生只能用一句话来概括你的追求——",
+    text: "你会选择哪一句？",
+    options: [
+      { text: "长风破浪会有时，直挂云帆济沧海", scores: { libai: 4 } },
+      { text: "人生如逆旅，我亦是行人", scores: { su: 4 } },
+      { text: "此心安处是吾乡", scores: { su: 3, tao: 1 } },
+      { text: "亦余心之所善兮，虽九死其犹未悔", scores: { quyuan: 4 } }
+    ]
+  }
+];
+
+// ===== 文人结果数据 =====
+const literatiResults = {
+  su: {
+    name: "苏轼",
+    dynasty: "北宋 · 东坡居士",
+    portraitEmoji: "🧓",
+    poem: "莫听穿林打叶声，何妨吟啸且徐行。\n竹杖芒鞋轻胜马，谁怕？\n一蓑烟雨任平生。",
+    poemTitle: "《定风波·莫听穿林打叶声》",
+    traits: ["豁达洒脱", "随遇而安", "诗酒风流", "人间烟火", "笑对人生"],
+    analysis: "你是苏东坡的灵魂知己——这世间最难能可贵的，便是你在风雨中依然能吟啸徐行的豁达。你不执着于得失，不困于荣辱，既能在朝堂之上指点江山，也能在田间地头品味人间烟火。人生于你，不过是一场烟雨任平生的旅行。你相信「此心安处是吾乡」，无论身处何方，心中自有清风明月。",
+    color: "#d4a853"
+  },
+  libai: {
+    name: "李白",
+    dynasty: "盛唐 · 谪仙人",
+    portraitEmoji: "🦅",
+    poem: "君不见黄河之水天上来，\n奔流到海不复回。\n君不见高堂明镜悲白发，\n朝如青丝暮成雪。",
+    poemTitle: "《将进酒》",
+    traits: ["豪放不羁", "浪漫至极", "自由灵魂", "诗仙风骨", "天马行空"],
+    analysis: "你是李太白的知音——你的灵魂中流淌着黄河之水般的豪情与浪漫。你不愿被俗世的条条框框所束缚，心中永远住着一个「仰天大笑出门去」的少年。你是天生的诗人，用酒和月光丈量这个世界的宽广。别人看到的是苟且，你看到的是「长风破浪会有时」的希望与壮美。",
+    color: "#e8c170"
+  },
+  dufu: {
+    name: "杜甫",
+    dynasty: "盛唐 · 少陵野老",
+    portraitEmoji: "📖",
+    poem: "安得广厦千万间，\n大庇天下寒士俱欢颜！\n风雨不动安如山。\n呜呼！何时眼前突兀见此屋，\n吾庐独破受冻死亦足！",
+    poemTitle: "《茅屋为秋风所破歌》",
+    traits: ["心怀天下", "忧国忧民", "深沉厚重", "悲悯之心", "坚韧不拔"],
+    analysis: "你是杜子美的同道——你有一颗兼济天下的赤子之心，这份深沉的忧患意识让你与众不同。你不会只看到眼前的花开花落，而是始终挂念着远方那些寒风中瑟缩的身影。你的温柔不是轻声细语，而是「吾庐独破受冻死亦足」的壮烈与无私。这个世界需要你的悲悯与坚守。",
+    color: "#8b7355"
+  },
+  wangwei: {
+    name: "王维",
+    dynasty: "盛唐 · 诗佛",
+    portraitEmoji: "🏔️",
+    poem: "空山新雨后，天气晚来秋。\n明月松间照，清泉石上流。\n竹喧归浣女，莲动下渔舟。\n随意春芳歇，王孙自可留。",
+    poemTitle: "《山居秋暝》",
+    traits: ["空灵澄澈", "诗中有画", "禅意深邃", "淡泊宁静", "超然物外"],
+    analysis: "你是王摩诘的知己——你的内心如同一幅水墨丹青，空灵、澄澈、不着痕迹。你善于在纷繁世事中发现那些细微的美：松间明月、石上清泉、雨后空山。你不追求轰轰烈烈，却能在「行到水穷处，坐看云起时」的从容中获得最深的满足。你的存在本身，就是一首安静的诗。",
+    color: "#7ba68c"
+  },
+  xinqiji: {
+    name: "辛弃疾",
+    dynasty: "南宋 · 稼轩居士",
+    portraitEmoji: "⚔️",
+    poem: "醉里挑灯看剑，梦回吹角连营。\n八百里分麾下炙，五十弦翻塞外声，\n沙场秋点兵。",
+    poemTitle: "《破阵子·为陈同甫赋壮词以寄之》",
+    traits: ["壮怀激烈", "铁骨柔情", "豪气干云", "家国情怀", "英雄本色"],
+    analysis: "你是辛稼轩的战友——你的骨子里有一把永远熄不灭的烈火。你胸怀天下，嫉恶如仇，虽然命运未必善待了你，但你从未放下过心中那把剑。你的柔情只给值得的人，你的热血只为值得的事沸腾。你是那种「把吴钩看了，栏杆拍遍」的孤勇者——世间少有人懂你，但懂你的人，会永远敬你。",
+    color: "#c45c4a"
+  },
+  liqingzhao: {
+    name: "李清照",
+    dynasty: "两宋 · 易安居士",
+    portraitEmoji: "🌸",
+    poem: "寻寻觅觅，冷冷清清，\n凄凄惨惨戚戚。\n乍暖还寒时候，最难将息。\n三杯两盏淡酒，\n怎敌他、晚来风急！",
+    poemTitle: "《声声慢·寻寻觅觅》",
+    traits: ["才情绝世", "敏感细腻", "至情至性", "清冷孤傲", "词中皇后"],
+    analysis: "你是李易安的知音——你拥有极其敏锐的心灵，能感知到这个世界最细微的颤动。你的情感丰富而深沉，快乐时「沉醉不知归路」，悲伤时「人比黄花瘦」。你不随波逐流，不委屈自己去迎合世俗，宁愿「凄凄惨惨戚戚」地真实活着，也不愿粉饰太平地麻木度日。你是世间最珍贵的那类人——至情至性，不染尘埃。",
+    color: "#d4878f"
+  },
+  tao: {
+    name: "陶渊明",
+    dynasty: "东晋 · 五柳先生",
+    portraitEmoji: "🌾",
+    poem: "结庐在人境，而无车马喧。\n问君何能尔？心远地自偏。\n采菊东篱下，悠然见南山。\n山气日夕佳，飞鸟相与还。",
+    poemTitle: "《饮酒·其五》",
+    traits: ["淡泊名利", "归隐田园", "率真自然", "自在从容", "悠然自得"],
+    analysis: "你是陶元亮的同路人——在这个纷纷扰扰的世界里，你选择了最勇敢的那条路：做真实的自己。你不屑于功名利禄的追逐，「不为五斗米折腰」是你骨子里的骄傲。你的快乐很简单：一杯酒、一丛菊、一座南山，便足以让灵魂安顿。别人笑你太清高，你笑别人看不穿——这世间最奢侈的自由，就是做回自己。",
+    color: "#a8b87c"
+  },
+  quyuan: {
+    name: "屈原",
+    dynasty: "战国 · 三闾大夫",
+    portraitEmoji: "🌊",
+    poem: "长太息以掩涕兮，哀民生之多艰。\n亦余心之所善兮，虽九死其犹未悔。\n路漫漫其修远兮，吾将上下而求索。",
+    poemTitle: "《离骚》",
+    traits: ["高洁不屈", "至死不渝", "家国情怀", "理想主义", "九死不悔"],
+    analysis: "你是屈原的同道中人——你是世间最纯粹的理想主义者，拥有「虽九死其犹未悔」的坚定信念。你不会向世俗低头，不会与污浊妥协，宁可怀沙沉江，也不愿弄脏自己的灵魂。你的孤独是深刻的，因为「众人皆醉我独醒」从来不是一种荣耀，而是一种悲壮的使命。这个世界欠你一个懂你的人，但历史会记住你的名字。",
+    color: "#5b8fa8"
+  }
+};
+
+// ===== 核心逻辑 =====
+let currentQuestion = 0;
+let scores = {};
+
+function initScores() {
+  scores = {};
+  const keys = Object.keys(literatiResults);
+  keys.forEach(k => scores[k] = 0);
+}
+
+function startQuiz() {
+  initScores();
+  currentQuestion = 0;
+  document.getElementById('startPage').style.display = 'none';
+  document.getElementById('quizPage').style.display = 'flex';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestion];
+  const labels = ['甲', '乙', '丙', '丁'];
+  const card = document.getElementById('questionCard');
+
+  // 更新进度
+  document.getElementById('currentQ').textContent = currentQuestion + 1;
+  const pct = Math.round((currentQuestion / 15) * 100);
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  let html = `<div class="q-label">第${['一','二','三','四','五','六','七','八','九','十','十一','十二','十三','十四','十五'][currentQuestion]}题</div>`;
+  html += `<div class="q-scene">${q.scene}</div>`;
+  html += `<div class="q-text">${q.text}</div>`;
+  html += `<div class="options">`;
+  q.options.forEach((opt, i) => {
+    html += `<div class="option-btn" onclick="selectOption(${i})" data-index="${i}">
+      <div class="option-label">${labels[i]}</div>
+      <div class="option-text">${opt.text}</div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  card.innerHTML = html;
+  card.style.animation = 'none';
+  card.offsetHeight; // reflow
+  card.style.animation = 'slideIn 0.5s ease';
+}
+
+function selectOption(index) {
+  const q = questions[currentQuestion];
+  const opt = q.options[index];
+
+  // 计分
+  Object.entries(opt.scores).forEach(([key, val]) => {
+    scores[key] = (scores[key] || 0) + val;
+  });
+
+  // 视觉反馈
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.classList.remove('selected'));
+  btns[index].classList.add('selected');
+
+  // 下一题或显示结果
+  setTimeout(() => {
+    currentQuestion++;
+    if (currentQuestion < 15) {
+      renderQuestion();
+    } else {
+      showLoading();
+    }
+  }, 400);
+}
+
+function showLoading() {
+  document.getElementById('quizPage').style.display = 'none';
+  document.getElementById('loadingPage').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('loadingPage').style.display = 'none';
+    showResult();
+  }, 2800);
+}
+
+function showResult() {
+  // 计算结果
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const winner = sorted[0][0];
+  const result = literatiResults[winner];
+
+  // 获取前3名作为同类文人
+  const kindred = sorted.slice(1, 4).map(([key, score]) => ({
+    ...literatiResults[key],
+    matchPct: Math.round((score / sorted[0][1]) * 100)
+  }));
+
+  const container = document.getElementById('resultPage');
+  container.style.display = 'flex';
+
+  const content = document.getElementById('resultContent');
+
+  let html = `
+    <div class="result-header">
+      <div class="label">✦ 你的文人灵魂 ✦</div>
+      <h2>${result.name}</h2>
+      <div class="dynasty">${result.dynasty}</div>
+    </div>
+
+    <div class="portrait-frame">
+      <div class="portrait-corner tl"></div>
+      <div class="portrait-corner tr"></div>
+      <div class="portrait-corner bl"></div>
+      <div class="portrait-corner br"></div>
+      <div class="portrait-placeholder" style="font-size:60px;">${result.portraitEmoji}</div>
+    </div>
+
+    <div class="poem-card">
+      <div class="poem-source">—— 最贴合你灵魂的诗句 ——</div>
+      <div class="poem-text">${result.poem.replace(/\n/g, '<br>')}</div>
+      <div class="poem-title">${result.poemTitle}</div>
+    </div>
+
+    <div class="trait-tags">
+      ${result.traits.map(t => `<span class="trait-tag">${t}</span>`).join('')}
+    </div>
+
+    <div class="analysis-section">
+      <h3>✦ 灵 魂 解 读 ✦</h3>
+      <div class="analysis-text">${result.analysis}</div>
+    </div>
+
+    <div class="kindred-section">
+      <h3>与你灵魂相近的文人</h3>
+      <div class="kindred-list">
+        ${kindred.map(k => `
+          <div class="kindred-item">
+            ${k.name}
+            <span class="match-pct">契合度 ${k.matchPct}%</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn-primary" onclick="shareResult()">分 享 结 果</button>
+      <button class="btn-secondary" onclick="restart()" style="margin-top:8px;">重 新 测 试</button>
+    </div>
+  `;
+
+  content.innerHTML = html;
+}
+
+function shareResult() {
+  // 复制结果文字到剪贴板
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  const winner = sorted[0][0];
+  const result = literatiResults[winner];
+
+  const text = `【千年一梦·文人灵魂测试】\n\n我的灵魂文人是：${result.name}（${result.dynasty}）\n\n「${result.poem.split('\n')[0]}」\n\n${result.traits.join(' · ')}\n\n${result.analysis.slice(0, 60)}...\n\n来测测你是哪位文人墨客？`;
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✨ 结果已复制到剪贴板，快去分享吧！');
+    }).catch(() => {
+      alert('复制失败，请手动复制分享~');
+    });
+  } else {
+    alert('请手动复制以下内容分享：\n\n' + text);
+  }
+}
+
+function restart() {
+  document.getElementById('resultPage').style.display = 'none';
+  document.getElementById('startPage').style.display = 'flex';
+}
+</script>
+</body>
+</html>
