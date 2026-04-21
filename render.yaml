@@ -1,9 +1,11 @@
 services:
   - type: web
     name: literati-soul-quiz
-    runtime: static
-    buildCommand: ""
-    staticPublishPath: .
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: ADMIN_SECRET
+        value: cl2026
