@@ -2130,7 +2130,8 @@ function restart() {
   </div>
 
   <div class="admin-tip">
-    💡 打开方式：在网址后加 <code style="color:var(--gold);">?admin</code> 或在首页连续点击标题3次
+    💡 打开方式：网址加 <code style="color:var(--gold);">?admin=cl2026</code> 或首页连点标题3次<br>
+    📌 数据存储在浏览器本地，仅在你自己设备上统计
   </div>
 
   <button class="admin-reset-btn" onclick="resetAdminData()">重置所有数据</button>
@@ -2138,13 +2139,9 @@ function restart() {
 
 <script>
 // ============================================================
-//  隐藏管理面板 - 访问统计（仅管理员可见）
+//  隐藏管理面板 - 访问统计（仅管理员可见，localStorage存储）
 // ============================================================
 const ADMIN_SECRET = 'cl2026';
-const COUNTER_NAMESPACE = 'literati-quiz-2026';
-
-// 计数器API（免费，无需key）
-const COUNTER_API = 'https://api.counterapi.dev/v1/' + COUNTER_NAMESPACE;
 
 // 管理面板开关
 let adminOpen = false;
@@ -2153,12 +2150,76 @@ let adminOpen = false;
 let titleClickCount = 0;
 let titleClickTimer = null;
 
+// ===== localStorage 数据操作 =====
+function getAdminData() {
+  try {
+    return JSON.parse(localStorage.getItem('lq_admin') || '{}');
+  } catch(e) { return {}; }
+}
+
+function saveAdminData(data) {
+  localStorage.setItem('lq_admin', JSON.stringify(data));
+}
+
+// 记录访问
+function trackVisit() {
+  const data = getAdminData();
+  data.visits = (data.visits || 0) + 1;
+  
+  const today = new Date().toISOString().slice(0, 10);
+  if (!data.daily) data.daily = {};
+  data.daily[today] = (data.daily[today] || 0) + 1;
+  
+  // 记录最近访问
+  if (!data.recent) data.recent = [];
+  data.recent.unshift({
+    time: new Date().toLocaleString('zh-CN'),
+    type: 'visit'
+  });
+  if (data.recent.length > 50) data.recent.length = 50;
+  
+  saveAdminData(data);
+}
+
+// 记录测试完成
+function trackComplete(resultKey) {
+  const data = getAdminData();
+  data.completes = (data.completes || 0) + 1;
+  
+  if (!data.results) data.results = {};
+  data.results[resultKey] = (data.results[resultKey] || 0) + 1;
+  
+  // 记录最近访问
+  if (!data.recent) data.recent = [];
+  data.recent.unshift({
+    time: new Date().toLocaleString('zh-CN'),
+    type: 'complete',
+    result: literatiResults[resultKey].name
+  });
+  if (data.recent.length > 50) data.recent.length = 50;
+  
+  saveAdminData(data);
+}
+
+// 页面加载时记录访问
+trackVisit();
+
+// 在showResult函数中调用trackComplete
+const _origShowResult = showResult;
+showResult = function() {
+  _origShowResult();
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  if (sorted.length > 0) {
+    trackComplete(sorted[0][0]);
+  }
+};
+
+// ===== 管理面板交互 =====
 document.addEventListener('DOMContentLoaded', () => {
   // 检查URL参数
   const params = new URLSearchParams(window.location.search);
   if (params.get('admin') === ADMIN_SECRET) {
     openAdmin();
-    // 清除URL中的admin参数
     window.history.replaceState({}, '', window.location.pathname);
   }
 
@@ -2178,49 +2239,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// 记录访问
-function trackVisit() {
-  // 总访问量 +1
-  fetch(COUNTER_API + '/visits/up').catch(() => {});
-  // 今日访问量
-  const today = new Date().toISOString().slice(0, 10);
-  fetch(COUNTER_API + '/day-' + today + '/up').catch(() => {});
-}
-trackVisit();
-
-// 记录测试完成
-function trackComplete(resultKey) {
-  fetch(COUNTER_API + '/completes/up').catch(() => {});
-  // 记录各文人被匹配次数
-  fetch(COUNTER_API + '/result-' + resultKey + '/up').catch(() => {});
-  // 记录最近访问
-  try {
-    const recent = JSON.parse(localStorage.getItem('lq_recent') || '[]');
-    recent.unshift({
-      time: new Date().toLocaleString('zh-CN'),
-      result: literatiResults[resultKey].name
-    });
-    if (recent.length > 10) recent.length = 10;
-    localStorage.setItem('lq_recent', JSON.stringify(recent));
-  } catch(e) {}
-}
-
-// 在showResult函数中调用trackComplete
-const _origShowResult = showResult;
-showResult = function() {
-  _origShowResult();
-  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-  if (sorted.length > 0) {
-    trackComplete(sorted[0][0]);
-  }
-};
-
-// 管理面板
-async function openAdmin() {
+function openAdmin() {
   adminOpen = true;
   document.getElementById('adminPanel').classList.add('open');
   document.getElementById('adminOverlay').classList.add('open');
-  await refreshAdminData();
+  refreshAdminData();
 }
 
 function closeAdmin() {
@@ -2229,41 +2252,24 @@ function closeAdmin() {
   document.getElementById('adminOverlay').classList.remove('open');
 }
 
-async function refreshAdminData() {
-  const ids = ['visits', 'completes'];
+function refreshAdminData() {
+  const data = getAdminData();
   const today = new Date().toISOString().slice(0, 10);
-  ids.push('day-' + today);
-
-  // 获取各文人结果计数
-  const literatiKeys = Object.keys(literatiResults);
-  literatiKeys.forEach(k => ids.push('result-' + k));
-
-  // 并行请求
-  const results = {};
-  await Promise.all(ids.map(async id => {
-    try {
-      const res = await fetch(COUNTER_API + '/' + id);
-      const data = await res.json();
-      results[id] = data.count || 0;
-    } catch(e) {
-      results[id] = 0;
-    }
-  }));
 
   // 更新数字
-  document.getElementById('adminVisits').textContent = results['visits'] || 0;
-  document.getElementById('adminVisits').classList.remove('loading');
-  document.getElementById('adminCompletes').textContent = results['completes'] || 0;
-  document.getElementById('adminCompletes').classList.remove('loading');
-  document.getElementById('adminToday').textContent = results['day-' + today] || 0;
-  document.getElementById('adminToday').classList.remove('loading');
+  document.getElementById('adminVisits').textContent = data.visits || 0;
+  document.getElementById('adminCompletes').textContent = data.completes || 0;
+  document.getElementById('adminToday').textContent = (data.daily && data.daily[today]) || 0;
 
   // 文人分布柱状图
   const distEl = document.getElementById('adminDistribution');
-  const maxCount = Math.max(1, ...literatiKeys.map(k => results['result-' + k] || 0));
+  const literatiKeys = Object.keys(literatiResults);
+  const results = data.results || {};
+  const maxCount = Math.max(1, ...literatiKeys.map(k => results[k] || 0));
+  
   let distHTML = '';
   literatiKeys.forEach(k => {
-    const count = results['result-' + k] || 0;
+    const count = results[k] || 0;
     const pct = Math.round((count / maxCount) * 100);
     const color = literatiResults[k].color;
     distHTML += `
@@ -2279,47 +2285,25 @@ async function refreshAdminData() {
 
   // 最近访问
   const recentEl = document.getElementById('adminRecent');
-  try {
-    const recent = JSON.parse(localStorage.getItem('lq_recent') || '[]');
-    if (recent.length === 0) {
-      recentEl.textContent = '暂无记录（仅记录本设备的完成数据）';
-    } else {
-      recentEl.innerHTML = recent.map(r =>
-        `<div style="padding:4px 0;border-bottom:1px solid rgba(212,168,83,0.04);">${r.time} → ${r.result}</div>`
-      ).join('');
-    }
-  } catch(e) {
+  const recent = data.recent || [];
+  if (recent.length === 0) {
     recentEl.textContent = '暂无记录';
+  } else {
+    // 显示最近10条，标注类型
+    const display = recent.slice(0, 10);
+    recentEl.innerHTML = display.map(r => {
+      const label = r.type === 'visit' ? '📄 访问' : `🎯 ${r.result || ''}`;
+      return `<div style="padding:5px 0;border-bottom:1px solid rgba(212,168,83,0.04);display:flex;justify-content:space-between;">
+        <span>${r.time}</span><span>${label}</span></div>`;
+    }).join('');
   }
 }
 
 // 重置数据
-async function resetAdminData() {
+function resetAdminData() {
   if (!confirm('确定要重置所有统计数据吗？此操作不可撤销。')) return;
-  
-  const ids = ['visits', 'completes'];
-  const literatiKeys = Object.keys(literatiResults);
-  literatiKeys.forEach(k => ids.push('result-' + k));
-  
-  // 重置近30天的每日计数
-  for (let i = 0; i < 30; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    ids.push('day-' + d.toISOString().slice(0, 10));
-  }
-
-  await Promise.all(ids.map(async id => {
-    try {
-      await fetch(COUNTER_API + '/' + id + '/down', { 
-        method: 'POST',
-        body: JSON.stringify({ count: 999999 })
-      });
-    } catch(e) {}
-  }));
-
-  localStorage.removeItem('lq_recent');
-  await refreshAdminData();
-  alert('数据已重置');
+  localStorage.removeItem('lq_admin');
+  refreshAdminData();
 }
 
 // ESC关闭管理面板
